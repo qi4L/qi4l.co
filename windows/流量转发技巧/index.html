@@ -25,32 +25,30 @@
 
     <meta name="description" content="前言日常对知识归纳">
 <meta property="og:type" content="article">
-<meta property="og:title" content="渗透中的数据转发技巧">
-<meta property="og:url" content="https://nuxm.gitee.io/windows/%E6%B8%97%E9%80%8F%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BD%AC%E5%8F%91%E6%8A%80%E5%B7%A7/index.html">
+<meta property="og:title" content="流量转发技巧">
+<meta property="og:url" content="https://nuxm.gitee.io/windows/%E6%B5%81%E9%87%8F%E8%BD%AC%E5%8F%91%E6%8A%80%E5%B7%A7/index.html">
 <meta property="og:site_name" content="nu1rの沉思录">
 <meta property="og:description" content="前言日常对知识归纳">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown91916990_p0.jpg">
-<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown20190912231425-01b83c92-d570-1.png">
-<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown20190912231528-27148446-d570-1.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20220902095430.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20220902095443.png">
 <meta property="article:published_time" content="2022-08-07T01:46:23.700Z">
-<meta property="article:modified_time" content="2022-08-07T02:48:55.458Z">
+<meta property="article:modified_time" content="2022-09-02T01:55:50.511Z">
 <meta property="article:author" content="nu1r">
-<meta property="article:tag" content="SSH隧道">
-<meta property="article:tag" content="ICMP隧道">
-<meta property="article:tag" content="DNS隧道">
+<meta property="article:tag" content="流量隧道">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown91916990_p0.jpg">
 
 
-<link rel="canonical" href="https://nuxm.gitee.io/windows/%E6%B8%97%E9%80%8F%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BD%AC%E5%8F%91%E6%8A%80%E5%B7%A7/">
+<link rel="canonical" href="https://nuxm.gitee.io/windows/%E6%B5%81%E9%87%8F%E8%BD%AC%E5%8F%91%E6%8A%80%E5%B7%A7/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/windows/%E6%B8%97%E9%80%8F%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BD%AC%E5%8F%91%E6%8A%80%E5%B7%A7/","path":"windows/渗透中的数据转发技巧/","title":"渗透中的数据转发技巧"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/windows/%E6%B5%81%E9%87%8F%E8%BD%AC%E5%8F%91%E6%8A%80%E5%B7%A7/","path":"windows/流量转发技巧/","title":"流量转发技巧"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>渗透中的数据转发技巧 | nu1rの沉思录</title>
+<title>流量转发技巧 | nu1rの沉思录</title>
   
 
 
@@ -179,7 +177,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -228,7 +226,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://nuxm.gitee.io/windows/%E6%B8%97%E9%80%8F%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BD%AC%E5%8F%91%E6%8A%80%E5%B7%A7/">
+    <link itemprop="mainEntityOfPage" href="https://nuxm.gitee.io/windows/%E6%B5%81%E9%87%8F%E8%BD%AC%E5%8F%91%E6%8A%80%E5%B7%A7/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/12.jpg">
@@ -241,12 +239,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="渗透中的数据转发技巧 | nu1rの沉思录">
+      <meta itemprop="name" content="流量转发技巧 | nu1rの沉思录">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          渗透中的数据转发技巧
+          流量转发技巧
         </h1>
 
         <div class="post-meta-container">
@@ -256,9 +254,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-08-07 09:46:23 / 修改时间：10:48:55" itemprop="dateCreated datePublished" datetime="2022-08-07T09:46:23+08:00">2022-08-07</time>
+      <time title="创建时间：2022-08-07 09:46:23" itemprop="dateCreated datePublished" datetime="2022-08-07T09:46:23+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-09-02 09:55:50" itemprop="dateModified" datetime="2022-09-02T09:55:50+08:00">2022-09-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -301,9 +305,9 @@
 </ul>
 <p>此时可以将C主机的端口转发到B主机的端口，那么外网主机A访问B主机的某某端口就相当于访问了C主机的某某。</p>
 <p>端口转发和端口映射原理是一样的只不过是应用场景不一样，假如我们将本机的端口转发到远程主机端口，我们可以叫端口映射，也可以叫端口转发</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown20190912231425-01b83c92-d570-1.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20220902095430.png"></p>
 <p>我们如果把本机可以访问到的任意 IP<br>的端口转发到另外一台服务器的端口，我们叫他端口转发</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown20190912231528-27148446-d570-1.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20220902095443.png"></p>
 <h1 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h1><p>渗透测试中，必须使用代理服务器，所以首先假设我们有一台具有公网IP的服务器，作为攻击机。</p>
 <p>内网是相对的，有时进入DMZ区，发现要使用VPN进入目标网段。在这里讨论只一台受害主机的攻击路径，认为是最小元，需要得出一个方法论，这个方法论将适用于更多台受害主机的环境。</p>
 <p>如果拿下的受害机在公网开放了端口，并且没有防火墙，可以随意访问它的端口，那么直接可以把它抽象成攻击机。</p>
@@ -504,9 +508,7 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/SSH%E9%9A%A7%E9%81%93/" rel="tag"><i class="fa fa-tag"></i> SSH隧道</a>
-              <a href="/tags/ICMP%E9%9A%A7%E9%81%93/" rel="tag"><i class="fa fa-tag"></i> ICMP隧道</a>
-              <a href="/tags/DNS%E9%9A%A7%E9%81%93/" rel="tag"><i class="fa fa-tag"></i> DNS隧道</a>
+              <a href="/tags/%E6%B5%81%E9%87%8F%E9%9A%A7%E9%81%93/" rel="tag"><i class="fa fa-tag"></i> 流量隧道</a>
           </div>
 
         
