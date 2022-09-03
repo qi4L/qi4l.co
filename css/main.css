@@ -18,10 +18,10 @@
   --btn-default-hover-bg: #222;
   --btn-default-hover-color: #fff;
   --btn-default-hover-border-color: #222;
-  --highlight-background: #1c1d21;
-  --highlight-foreground: #c0c5ce;
-  --highlight-gutter-background: #2c2d32;
-  --highlight-gutter-foreground: #afb4bc;
+  --highlight-background: #ecf4ee;
+  --highlight-foreground: #526057;
+  --highlight-gutter-background: #dce5de;
+  --highlight-gutter-foreground: #616e66;
   color-scheme: light;
 }
 html {
@@ -184,8 +184,8 @@ body {
   background: var(--body-bg-color);
   box-sizing: border-box;
   color: var(--text-color);
-  font-family: Lato, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  font-size: 1em;
+  font-family: JetBrains Mono, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 0.95em;
   line-height: 2;
   min-height: 100%;
   position: relative;
@@ -197,28 +197,28 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: Lato, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-family: ZCOOL KuaiLe, JetBrains Mono, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   font-weight: bold;
   line-height: 1.5;
   margin: 30px 0 15px;
 }
 h1 {
-  font-size: 1.5em;
+  font-size: 1.875em;
 }
 h2 {
-  font-size: 1.375em;
+  font-size: 1.75em;
 }
 h3 {
-  font-size: 1.25em;
+  font-size: 1.625em;
 }
 h4 {
-  font-size: 1.125em;
+  font-size: 1.5em;
 }
 h5 {
-  font-size: 1em;
+  font-size: 1.375em;
 }
 h6 {
-  font-size: 0.875em;
+  font-size: 1.25em;
 }
 p {
   margin: 0 0 20px;
@@ -340,13 +340,15 @@ td {
   margin-top: 3px;
 }
 .toggle.toggle-arrow .toggle-line:first-child {
+  left: 50%;
   top: 2px;
-  transform: rotate(-45deg);
+  transform: rotate(45deg);
   width: 50%;
 }
 .toggle.toggle-arrow .toggle-line:last-child {
+  left: 50%;
   top: -2px;
-  transform: rotate(45deg);
+  transform: rotate(-45deg);
   width: 50%;
 }
 .toggle.toggle-close .toggle-line:nth-child(2) {
@@ -354,21 +356,19 @@ td {
 }
 .toggle.toggle-close .toggle-line:first-child {
   top: 5px;
-  transform: rotate(-45deg);
+  transform: rotate(45deg);
 }
 .toggle.toggle-close .toggle-line:last-child {
   top: -5px;
-  transform: rotate(45deg);
+  transform: rotate(-45deg);
 }
-pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}/*!
-  Theme: An Old Hope – Star Wars Syntax
-  Author: (c) Gustavo Costa <gusbemacbe@gmail.com>
-  Maintainer: @gusbemacbe
-
-  Original theme - Ocean Dark Theme – by https://github.com/gavsiu
-  Based on Jesse Leite's Atom syntax theme 'An Old Hope'
-    https://github.com/JesseLeite/an-old-hope-syntax-atom
-*/.hljs{background:#1c1d21;color:#c0c5ce}.hljs-comment,.hljs-quote{color:#b6b18b}.hljs-deletion,.hljs-name,.hljs-regexp,.hljs-selector-class,.hljs-selector-id,.hljs-tag,.hljs-template-variable,.hljs-variable{color:#eb3c54}.hljs-built_in,.hljs-link,.hljs-literal,.hljs-meta,.hljs-number,.hljs-params,.hljs-type{color:#e7ce56}.hljs-attribute{color:#ee7c2b}.hljs-addition,.hljs-bullet,.hljs-string,.hljs-symbol{color:#4fb4d7}.hljs-section,.hljs-title{color:#78bb65}.hljs-keyword,.hljs-selector-tag{color:#b45ea4}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}
+/*!
+  Theme: Atelier Savanna Light
+  Author: Bram de Haan (http://atelierbramdehaan.nl)
+  License: ~ MIT (or more permissive) [via base16-schemes-source]
+  Maintainer: @highlightjs/core-team
+  Version: 2021.09.0
+*/pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#526057;background:#ecf4ee}.hljs ::selection,.hljs::selection{background-color:#87928a;color:#526057}.hljs-comment{color:#78877d}.hljs-tag{color:#5f6d64}.hljs-operator,.hljs-punctuation,.hljs-subst{color:#526057}.hljs-operator{opacity:.7}.hljs-bullet,.hljs-deletion,.hljs-name,.hljs-selector-tag,.hljs-template-variable,.hljs-variable{color:#b16139}.hljs-attr,.hljs-link,.hljs-literal,.hljs-number,.hljs-symbol,.hljs-variable.constant_{color:#9f713c}.hljs-class .hljs-title,.hljs-title,.hljs-title.class_{color:#a07e3b}.hljs-strong{font-weight:700;color:#a07e3b}.hljs-addition,.hljs-code,.hljs-string,.hljs-title.class_.inherited__{color:#489963}.hljs-built_in,.hljs-doctag,.hljs-keyword.hljs-atrule,.hljs-quote,.hljs-regexp{color:#1c9aa0}.hljs-attribute,.hljs-function .hljs-title,.hljs-section,.hljs-title.function_,.ruby .hljs-property{color:#478c90}.diff .hljs-meta,.hljs-keyword,.hljs-template-tag,.hljs-type{color:#55859b}.hljs-emphasis{color:#55859b;font-style:italic}.hljs-meta,.hljs-meta .hljs-keyword,.hljs-meta .hljs-string{color:#867469}.hljs-meta .hljs-keyword,.hljs-meta-keyword{font-weight:700}
 .highlight:hover .copy-btn,
 pre:hover .copy-btn {
   opacity: 1;
@@ -443,7 +443,7 @@ pre figcaption a:hover {
 }
 pre,
 code {
-  font-family: consolas, Menlo, monospace, 'PingFang SC', 'Microsoft YaHei';
+  font-family: JetBrains Mono, consolas, Menlo, monospace, 'PingFang SC', 'Microsoft YaHei';
 }
 code {
   border-radius: 3px;
@@ -1151,7 +1151,7 @@ header.header {
   color: var(--brand-hover-color);
 }
 .site-title {
-  font-family: Lato, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-family: ZCOOL KuaiLe, JetBrains Mono, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   font-size: 1.375em;
   font-weight: normal;
   line-height: 1.5;
@@ -1494,11 +1494,11 @@ header.header {
   opacity: 0.6;
   position: fixed;
   z-index: 30;
-  left: 30px;
+  right: 30px;
 }
 @media (max-width: 991px) {
   .sidebar-toggle {
-    left: 20px;
+    right: 20px;
   }
 }
 .sidebar-toggle:hover {
@@ -1514,13 +1514,15 @@ header.header {
 }
 @media (any-hover: hover) {
   body:not(.sidebar-active) .sidebar-toggle:hover .toggle-line:first-child {
+    left: 50%;
     top: 2px;
-    transform: rotate(-45deg);
+    transform: rotate(45deg);
     width: 50%;
   }
   body:not(.sidebar-active) .sidebar-toggle:hover .toggle-line:last-child {
+    left: 50%;
     top: -2px;
-    transform: rotate(45deg);
+    transform: rotate(-45deg);
     width: 50%;
   }
 }
@@ -1529,11 +1531,11 @@ header.header {
 }
 .sidebar-active .sidebar-toggle .toggle-line:first-child {
   top: 5px;
-  transform: rotate(-45deg);
+  transform: rotate(45deg);
 }
 .sidebar-active .sidebar-toggle .toggle-line:last-child {
   top: -5px;
-  transform: rotate(45deg);
+  transform: rotate(-45deg);
 }
 .post-toc {
   font-size: 0.875em;
@@ -1794,11 +1796,11 @@ header.header {
   opacity: 0.6;
   position: fixed;
   z-index: 30;
-  left: 30px;
+  right: 30px;
 }
 @media (max-width: 991px) {
   .back-to-top {
-    left: 20px;
+    right: 20px;
   }
 }
 .back-to-top:hover {
@@ -1953,7 +1955,7 @@ header.header {
   width: 4px;
 }
 .post-body {
-  font-family: Lato, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-family: JetBrains Mono, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   overflow-wrap: break-word;
 }
 @media (min-width: 1200px) {
@@ -2140,7 +2142,7 @@ header.header {
 }
 .posts-expand .post-meta-container {
   color: #999;
-  font-family: Lato, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-family: JetBrains Mono, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   font-size: 0.75em;
   margin-top: 3px;
 }
@@ -2666,7 +2668,6 @@ mark.search-keyword {
   justify-content: space-between;
   margin: 0 auto;
   width: calc(100% - 20px);
-  flex-direction: row-reverse;
 }
 @media (min-width: 1200px) {
   .main {
@@ -2696,7 +2697,7 @@ mark.search-keyword {
   }
 }
 .footer-inner {
-  padding-right: 252px;
+  padding-left: 252px;
 }
 @media (max-width: 991px) {
   .footer-inner {
@@ -2958,28 +2959,37 @@ mark.search-keyword {
     padding: 10px 12px;
   }
 }
+/* 侧边、分页 rgba(255, 255, 255, 1);   0 和 1 是样式透明度*/
 .header-inner {
   background-color: #fff;
   border-radius: 30px 30px 30px 30px;
   box-shadow: 8px 7px 2px 0 rgba(0,0,0,0.12), 7px 4px 1px -2px rgba(0,0,0,0.06), 0 1px 5px 0 rgba(0,0,0,0.12);
 }
+/* 文章块样式 */
 .post-block {
   background-color: #fff;
   margin-bottom: 24px !important;
   border-radius: 30px 30px 30px 30px !important;
   box-shadow: 8px 7px 2px 0 rgba(0,0,0,0.12), 7px 4px 1px -2px rgba(0,0,0,0.06), 0 1px 5px 0 rgba(0,0,0,0.12) !important;
 }
+/* sidebar侧边个人头像样式 */
 .sidebar {
+/* 动画过渡时间 */
   transition-duration: 0.4s;
+/* 透明度 */
   opacity: 1;
 }
+/* 标题 */
 .posts-expand .post-title-link {
+/* 设置字体颜色 */
   color: #222;
 }
+/* 文章列表样式 */
 .main-inner {
   background-color: rgba(255,255,255,0);
   padding: 0px 40px 40px 40px;
 }
+/* 侧边、分页 rgba(255, 255, 255, 1);   0 和 1 是样式透明度 */
 .header-inner,
 .sidebar-inner,
 .pagination {
@@ -2987,6 +2997,7 @@ mark.search-keyword {
   border-radius: 30px 30px 30px 30px !important;
   box-shadow: 8px 7px 2px 0 rgba(0,0,0,0.12), 7px 4px 1px -2px rgba(0,0,0,0.06), 0 1px 5px 0 rgba(0,0,0,0.12) !important;
 }
+/* 背景图 */
 body {
   background-image: url("/images/1.jpg");
   background-repeat: no-repeat;
