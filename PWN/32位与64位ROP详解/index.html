@@ -24,17 +24,17 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"nuxm.gitee.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.12.2","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="前言做pwn的前置知识，写EXP要用到。">
+    <meta name="description" content="前言做pwn的师傅肯定会遇到这个疑惑，为什么32位和64位的ROP写起来不一样？（因为我没有师傅带(┬┬﹏┬┬)）">
 <meta property="og:type" content="article">
 <meta property="og:title" content="32位与64位ROP详解">
 <meta property="og:url" content="https://nuxm.gitee.io/PWN/32%E4%BD%8D%E4%B8%8E64%E4%BD%8DROP%E8%AF%A6%E8%A7%A3/index.html">
-<meta property="og:site_name" content="nu1rの沉思录">
-<meta property="og:description" content="前言做pwn的前置知识，写EXP要用到。">
+<meta property="og:site_name" content="nu1r沉思录">
+<meta property="og:description" content="前言做pwn的师傅肯定会遇到这个疑惑，为什么32位和64位的ROP写起来不一样？（因为我没有师傅带(┬┬﹏┬┬)）">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown93016202_p0.jpg">
 <meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownfMxenQwX7syu6Ri.png">
 <meta property="article:published_time" content="2022-03-26T07:12:48.479Z">
-<meta property="article:modified_time" content="2022-03-27T04:10:59.198Z">
+<meta property="article:modified_time" content="2022-09-14T02:19:59.566Z">
 <meta property="article:author" content="nu1r">
 <meta property="article:tag" content="ROP">
 <meta name="twitter:card" content="summary">
@@ -48,7 +48,7 @@
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/PWN/32%E4%BD%8D%E4%B8%8E64%E4%BD%8DROP%E8%AF%A6%E8%A7%A3/","path":"PWN/32位与64位ROP详解/","title":"32位与64位ROP详解"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>32位与64位ROP详解 | nu1rの沉思录</title>
+<title>32位与64位ROP详解 | nu1r沉思录</title>
   
 
 
@@ -78,10 +78,10 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <p class="site-title">nu1rの沉思录</p>
+      <p class="site-title">nu1r沉思录</p>
       <i class="logo-line"></i>
     </a>
-      <p class="site-subtitle" itemprop="description">某超科学安全研究员</p>
+      <p class="site-subtitle" itemprop="description">太努力就会莫名eom的咸鱼</p>
   </div>
 
   <div class="site-nav-right">
@@ -151,7 +151,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ROP"><span class="nav-text">ROP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFROP"><span class="nav-text">什么是ROP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81ROP"><span class="nav-text">为什么要ROP</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#32%E4%BD%8D"><span class="nav-text">32位</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#64%E4%BD%8D"><span class="nav-text">64位</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E4%BC%A0%E5%8F%82"><span class="nav-text">寄存器传参</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF"><span class="nav-text">利用思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gadaget%E5%87%86%E5%A4%87"><span class="nav-text">gadaget准备</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B3%84%E9%9C%B2system%E5%9C%B0%E5%9D%80%E5%92%8C-x2F-bin-x2F-sh"><span class="nav-text">泄露system地址和&#x2F;bin&#x2F;sh</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%84%E9%80%A0payload"><span class="nav-text">构造payload</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ROP"><span class="nav-text">ROP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFROP"><span class="nav-text">什么是ROP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81ROP"><span class="nav-text">为什么要ROP</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#32%E4%BD%8D"><span class="nav-text">32位</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#64%E4%BD%8D"><span class="nav-text">64位</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E4%BC%A0%E5%8F%82"><span class="nav-text">寄存器传参</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A0%86%E6%A0%88%E5%B9%B3%E8%A1%A1"><span class="nav-text">堆栈平衡</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%84%E9%80%A0payload"><span class="nav-text">构造payload</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -166,18 +166,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-count">21</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -234,12 +234,12 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="nu1rの沉思录">
+      <meta itemprop="name" content="nu1r沉思录">
       <meta itemprop="description" content="认真思考，努力奋斗，不做娱乐圈研究员，不做实验室黑客，能真正为平台、行业甚至国家贡献自己的力量">
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="32位与64位ROP详解 | nu1rの沉思录">
+      <meta itemprop="name" content="32位与64位ROP详解 | nu1r沉思录">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
@@ -262,7 +262,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-03-27 12:10:59" itemprop="dateModified" datetime="2022-03-27T12:10:59+08:00">2022-03-27</time>
+      <time title="修改时间：2022-09-14 10:19:59" itemprop="dateModified" datetime="2022-09-14T10:19:59+08:00">2022-09-14</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -284,12 +284,12 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>做pwn的前置知识，写EXP要用到。</p>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>做pwn的师傅肯定会遇到这个疑惑，为什么32位和64位的ROP写起来不一样？（因为我没有师傅带(┬┬﹏┬┬)）</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown93016202_p0.jpg"></p>
 <span id="more"></span>
 
 <h1 id="ROP"><a href="#ROP" class="headerlink" title="ROP"></a>ROP</h1><h2 id="什么是ROP"><a href="#什么是ROP" class="headerlink" title="什么是ROP"></a>什么是ROP</h2><p>ROP的全称为<code>Return-oriented programming</code>（返回导向编程），也可以理解为面向返回地址的编程，这是一种高级的内存攻击技术可以用来绕过现代操作系统的各种通用防御（比如内存不可执行和代码签名等）。通过上一篇文章栈溢出，我们可以发现栈溢出的控制点是ret处，那么ROP的核心思想就是利用以ret结尾的指令序列把栈中的应该返回EIP的地址更改成我们需要的值，从而控制程序的执行流程。</p>
-<h2 id="为什么要ROP"><a href="#为什么要ROP" class="headerlink" title="为什么要ROP"></a><strong>为什么要ROP</strong></h2><p>探究原因之前，我们先看一下什么是NX(DEP) NX即No-execute（不可执行）的意思，NX（DEP）的基本原理是将数据所在内存页标识为不可执行，当程序溢出成功转入shellcode时，程序会尝试在数据页面上执行指令，此时CPU就会抛出异常，而不是去执行恶意指令。随着 NX 保护的开启，以往直接向栈或者堆上直接注入代码的方式难以继续发挥效果。所以就有了各种绕过办法，rop就是一种</p>
+<h2 id="为什么要ROP"><a href="#为什么要ROP" class="headerlink" title="为什么要ROP"></a><strong>为什么要ROP</strong></h2><p>探究原因之前，我们先看一下什么是NX(DEP) NX即No-execute（不可执行）的意思，NX（DEP）的基本原理是将数据所在内存页标识为不可执行，当程序溢出成功转入shellcode时，程序会尝试在数据页面上执行指令，此时CPU就会抛出异常，而不是去执行恶意指令。随着 NX 保护的开启，以往直接向栈或者堆上直接注入代码的方式难以继续发挥效果。所以就有了各种绕过办法，ROP就是一种。</p>
 <h1 id="32位"><a href="#32位" class="headerlink" title="32位"></a>32位</h1><p>32位程序的栈溢出，只有输入的字节填满栈空间，和返回地址，即可劫持栈帧，达到控制执行流的效果,</p>
 <p>假设栈开辟了20字节的空间，rbp为8字节，由此可得payload如下</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload = <span class="string">b&#x27;A&#x27;</span>*(<span class="number">0x20</span>+<span class="number">0x8</span>) + p32(system_addr) + p32(bin_addr)</span><br></pre></td></tr></table></figure>
@@ -297,30 +297,28 @@
 
 
 
-<h1 id="64位"><a href="#64位" class="headerlink" title="64位"></a>64位</h1><h3 id="寄存器传参"><a href="#寄存器传参" class="headerlink" title="寄存器传参"></a>寄存器传参</h3><p>64位和32位程序的不同点之一就是，它的前6个参数是通过寄存器传递的，有更多的参数才用栈，所以构造rop链的方式和32位不同。</p>
+<h1 id="64位"><a href="#64位" class="headerlink" title="64位"></a>64位</h1><h2 id="寄存器传参"><a href="#寄存器传参" class="headerlink" title="寄存器传参"></a>寄存器传参</h2><p>64位和32位程序的不同点之一就是，它的前6个参数是通过寄存器传递的，有更多的参数才用栈，所以构造rop链的方式和32位不同。</p>
 <p>分别是<code>rdi</code>，<code>rsi</code>，<code>rdx</code>，<code>rcx</code>，<code>r8</code>，<code>r9</code>作为第1-6个参数。rax作为返回值 64位没有栈帧的指针，32位用ebp作为栈帧指针，64位取消了这个设定，所以rbp作为通用寄存器使用。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownfMxenQwX7syu6Ri.png"></p>
-<h3 id="利用思路"><a href="#利用思路" class="headerlink" title="利用思路"></a>利用思路</h3><p>构造rop,泄露出libc地址，调用system(“&#x2F;bin&#x2F;sh”)</p>
-<h3 id="gadaget准备"><a href="#gadaget准备" class="headerlink" title="gadaget准备"></a>gadaget准备</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ROPgadget –binary xxx –only “pop|ret”</span><br></pre></td></tr></table></figure>
-
-
-<h1 id="泄露system地址和-x2F-bin-x2F-sh"><a href="#泄露system地址和-x2F-bin-x2F-sh" class="headerlink" title="泄露system地址和&#x2F;bin&#x2F;sh"></a>泄露system地址和&#x2F;bin&#x2F;sh</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">system_addr = libc.symbols[<span class="string">&#x27;system&#x27;</span>] - libc.symbols[<span class="string">&#x27;puts&#x27;</span>] + u64(puts_addr)</span><br><span class="line">sh_addr = <span class="built_in">next</span>(libc.search(<span class="string">&#x27;/bin/sh&#x27;</span>))- libc.symbols[<span class="string">&#x27;puts&#x27;</span>] + u64(puts_addr)</span><br></pre></td></tr></table></figure>
-
-
-<h1 id="构造payload"><a href="#构造payload" class="headerlink" title="构造payload"></a>构造payload</h1><p>64位还要考虑堆栈平衡，由此可以有3种payload</p>
+<h2 id="堆栈平衡"><a href="#堆栈平衡" class="headerlink" title="堆栈平衡"></a>堆栈平衡</h2><p>还有一点要考虑的就是堆栈平衡，那么问题来了，什么是堆栈平衡。</p>
+<ol>
+<li>如何要返回父程序，则当我们在堆栈中进行堆栈的操作时候，一定要保证在RET这条指令之前，ESP指向的是我们压入栈中的地址</li>
+<li>如果通过堆栈传递了参数了，那么在函数执行完毕后，要平衡参数导致的堆栈变化</li>
+</ol>
+<p>人话就是，当函数在一步步执行的时候 一直到ret执行之前，堆栈栈顶的地址 一定要是call指令的下一个地址。</p>
+<p>也就是说函数执行前一直到函数执行结束，函数里面的堆栈是要保持不变的。</p>
+<p>如果堆栈变化了，那么，要在ret执行前将堆栈恢复成原来的样子。</p>
+<h2 id="构造payload"><a href="#构造payload" class="headerlink" title="构造payload"></a>构造payload</h2><p>64位还要考虑堆栈平衡，由此可以有3种payload</p>
+<p>清空rdi寄存器，ret维持堆栈平衡，将GOT表地址和PLT表地址弹到rdi寄存器，在通过libc搜索得到libc版本</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 泄露libc地址</span></span><br><span class="line">payload1=padding+p64(pop_rdi_ret) + p64(puts_got_addr) + p64(puts_plt_addr)</span><br></pre></td></tr></table></figure>
 
-
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 第一个payload利用ret来堆栈平衡</span></span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span> * (<span class="number">0x0f</span>+<span class="number">0x08</span>) + p64(ret_addr) + p64(pop_rdi_addr) + p64(bin_sh_addr) + p64(system_addr)</span><br></pre></td></tr></table></figure>
-
-
-
+<p>塞满栈空间和返回地址，维持堆栈平衡，清空rdi寄存器获取偏移地址，塞入&#x2F;bin&#x2F;sh字符和system函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 命令执行</span></span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span> * (<span class="number">0x0f</span>+<span class="number">0x08</span>) + p64(ret_addr) + p64(pop_rdi_addr) + p64(bin_sh_addr) + p64(system_addr)</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 寄存器调用顺序：rdi、rsi、rdx、rcx、r8、r9</span></span><br><span class="line"><span class="comment"># 先利用pop+ret将bin_sh_addr地址弹到rdi寄存器中去，再调用system函数来执行</span></span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span> * (<span class="number">0x0f</span>+<span class="number">0x08</span>) + p64(pop_rdi_addr) + p64(bin_sh_addr) + p64(system_addr)</span><br></pre></td></tr></table></figure>
 
-
 <p>前两个payload利用64位程序函数调用参数规则构造</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// ret堆栈平衡，直接返回bin_sh_addr处也可以获得系统权限。</span><br><span class="line"><span class="comment"># payload = &#x27;a&#x27; * (0x0f+0x08) + p64(ret_addr) + p64(bin_sh_addr)</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// ret堆栈平衡，直接返回bin_sh_addr处也可以获得系统权限。</span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span> * (<span class="number">0x0f</span>+<span class="number">0x08</span>) + p64(ret_addr) + p64(bin_sh_addr)</span><br></pre></td></tr></table></figure>
 
 
 
@@ -339,8 +337,8 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/Inject/JAVA%20EL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5/" rel="prev" title="JavaEL表达式注入">
-                  <i class="fa fa-chevron-left"></i> JavaEL表达式注入
+                <a href="/PWN/%E6%A0%88%E6%BA%A2%E5%87%BA/" rel="prev" title="栈溢出">
+                  <i class="fa fa-chevron-left"></i> 栈溢出
                 </a>
             </div>
             <div class="post-nav-item">
