@@ -560,7 +560,7 @@
 
 <h2 id="Linux下破坏attach"><a href="#Linux下破坏attach" class="headerlink" title="Linux下破坏attach"></a>Linux下破坏attach</h2><p><code>把对应的UNIX Domain Socket文件删掉</code></p>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a><center>结语</center></h1><p>关于内存马的攻防，还一直在不停迭代当中，就目前而言，还并没有行之有效的对内存马查杀方法，因为当前的查杀方法都有其弊端。</p>
-<p>内存马可以配合JNDI注入，命令执行，普通马改为内存马等，配合使用。目前红队内网站稳脚跟的首选。</p>
+<p>内存马可以配合JNDI注入，反序列化，普通马改为内存马等方法写入。目前红队内网站稳脚跟的首选。</p>
 <p>内存马是一种写入方式，所以既可以是WebShell也可以是ShellCode。</p>
 ]]></content>
       <categories>
@@ -630,7 +630,7 @@
 <ul>
 <li>KRB_NT_PRINCIPAL &#x3D; 1 means just the name of the principal 如dailker</li>
 <li>KRB_NT_SRV_INST &#x3D; 2 service and other unique instance (krbtgt) 如krbtgt，cifs</li>
-<li>KRB_NT_ENTERPRISE_PRINCIPAL &#x3D; 10 如 <a href="mailto:&#x75;&#x73;&#101;&#114;&#64;&#x64;&#x6f;&#x6d;&#97;&#105;&#x6e;&#46;&#99;&#111;&#109;">&#x75;&#x73;&#101;&#114;&#64;&#x64;&#x6f;&#x6d;&#97;&#105;&#x6e;&#46;&#99;&#111;&#109;</a><br>在AS_REQ里面cname 是请求的用户,这个用户名存在和不存在，返回的包有差异，可以用于枚举域内用户名。详情见<a href='#p1'>相关的安全问题&gt;用户名枚举</a></li>
+<li>KRB_NT_ENTERPRISE_PRINCIPAL &#x3D; 10 如 <a href="mailto:&#117;&#115;&#x65;&#114;&#x40;&#x64;&#x6f;&#x6d;&#x61;&#x69;&#x6e;&#x2e;&#x63;&#111;&#x6d;">&#117;&#115;&#x65;&#114;&#x40;&#x64;&#x6f;&#x6d;&#x61;&#x69;&#x6e;&#x2e;&#x63;&#111;&#x6d;</a><br>在AS_REQ里面cname 是请求的用户,这个用户名存在和不存在，返回的包有差异，可以用于枚举域内用户名。详情见<a href='#p1'>相关的安全问题&gt;用户名枚举</a></li>
 </ul>
 </li>
 <li><p>sname<br>PrincipalName 类型<br>在AS_REQ里面sname是krbtgt，类型是KRB_NT_SRV_INST</p>
@@ -2730,7 +2730,7 @@
 <p>值得注意的是，displayName不能用于登陆，虽然跟域用户名往往一样。但是这个不是直接用于登陆的我们登陆用的账号，在一些公司里面，displayName往往是中文，登陆的用户名是拼音。登陆的格式有以下两种格式。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0188d6994cbdbc4240.png"></p>
 <ol start="4">
-<li>第一种格式是UserPrincipalName，我们简称为UPN，一般的格式是用户名@域名这样的格式。<br>​<br>比如这里就是<a href="mailto:&#x6c;&#x69;&#x73;&#105;&#x40;&#116;&#x65;&#115;&#116;&#46;&#108;&#111;&#99;&#x61;&#108;">&#x6c;&#x69;&#x73;&#105;&#x40;&#116;&#x65;&#115;&#116;&#46;&#108;&#111;&#99;&#x61;&#108;</a></li>
+<li>第一种格式是UserPrincipalName，我们简称为UPN，一般的格式是用户名@域名这样的格式。<br>​<br>比如这里就是<a href="mailto:&#x6c;&#x69;&#115;&#x69;&#x40;&#116;&#x65;&#x73;&#116;&#x2e;&#108;&#111;&#99;&#x61;&#x6c;">&#x6c;&#x69;&#115;&#x69;&#x40;&#116;&#x65;&#x73;&#116;&#x2e;&#108;&#111;&#99;&#x61;&#x6c;</a></li>
 </ol>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e2811e15d3228c71.png"></p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b73488011e5e86a7.png"></p>
@@ -5171,26 +5171,25 @@
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage.png"></p>
 <p>点击Import &#x2F; expoet CA certificate 选择Certificate in DER format导出CA证书并保存到某一个文件夹：</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_1.png"></p>
-<p>然后将CA证书上传到VPS并在该目录下用Python开启http服务：</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_2.png"></p>
-<p>启动夜神模拟器，打开内置游览器，</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_3.png"></p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_4.png"></p>
-<p>下载证书至Download文件夹下（默认就是Download目录）：</p>
+<p>点击文件助手打开电脑文件夹，将证书移动至Download文件夹下（默认就是Download目录）：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20220919105246.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20220919105329.png"></p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_5.png"></p>
 <p>回到本机中，打开CMD窗口，cd命令进入下载的夜神模拟器的bin目录下：</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_6.png"></p>
-<p>nox_adb.exe即为夜神模拟器adb模式端口，使用nox_adb.exe执行以下命令（分布执行）：</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">.\nox_adb.exe root</span><br><span class="line">.\nox_adb.exe remount</span><br><span class="line">.\nox_adb.exe shell</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>nox_adb.exe即为夜神模拟器adb模式端口，使用nox_adb.exe执行以下命令（分步执行）：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">.\nox_adb.exe root</span><br><span class="line">.\nox_adb.exe remount</span><br><span class="line">.\nox_adb.exe shell</span><br></pre></td></tr></table></figure>
 
 
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_7.png"></p>
 <p>此时在此处输入：cd sdcard&#x2F;Download</p>
 <p>执行以下命令：</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /sdcard/Download/</span><br><span class="line"><span class="built_in">mv</span> CA.der <span class="number">9</span>a5ba575.<span class="number">0</span></span><br><span class="line"><span class="built_in">mv</span> <span class="number">9</span>a5ba575.<span class="number">0</span> /system/etc/security/cacerts/</span><br><span class="line">chmod <span class="number">644</span> /system/etc/security/cacerts/<span class="number">9</span>a5ba575.<span class="number">0</span></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> CA.der /system/etc/security/cacerts/</span><br><span class="line">chmod <span class="number">644</span> /system/etc/security/cacerts/CA.der</span><br></pre></td></tr></table></figure>
 
 <p>PS：<code>此时后缀名一定要是xxx.der不是的话要重新生成证书并保存到htdocs文件夹！</code></p>
+<p>上诉方法如果未成功，可以用这个。</p>
+<p>把CA.der改为CA.cer</p>
+<p>点系统，搜索从SD卡安装证书，找到CA.cer安装即可。</p>
 <h1 id="安装-配置Clash"><a href="#安装-配置Clash" class="headerlink" title="安装+配置Clash"></a>安装+配置Clash</h1><p>下载<a href="https://github.com/Kr328/ClashForAndroid/tags">clash</a></p>
 <p>下载好之后在夜神模拟器中导入apk文件：</p>
 <p>直接拖入即可</p>

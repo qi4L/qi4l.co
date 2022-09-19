@@ -33,9 +33,8 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage.png">
 <meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_1.png">
-<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_2.png">
-<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_3.png">
-<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_4.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20220919105246.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20220919105329.png">
 <meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_5.png">
 <meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_6.png">
 <meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_7.png">
@@ -56,7 +55,7 @@
 <meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_22.png">
 <meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_23.png">
 <meta property="article:published_time" content="2022-04-20T06:44:01.453Z">
-<meta property="article:modified_time" content="2022-09-13T14:36:22.359Z">
+<meta property="article:modified_time" content="2022-09-19T03:00:50.523Z">
 <meta property="article:author" content="nu1r">
 <meta property="article:tag" content="APP渗透">
 <meta name="twitter:card" content="summary">
@@ -284,7 +283,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-09-13 22:36:22" itemprop="dateModified" datetime="2022-09-13T22:36:22+08:00">2022-09-13</time>
+      <time title="修改时间：2022-09-19 11:00:50" itemprop="dateModified" datetime="2022-09-19T11:00:50+08:00">2022-09-19</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -320,26 +319,25 @@
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage.png"></p>
 <p>点击Import &#x2F; expoet CA certificate 选择Certificate in DER format导出CA证书并保存到某一个文件夹：</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_1.png"></p>
-<p>然后将CA证书上传到VPS并在该目录下用Python开启http服务：</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_2.png"></p>
-<p>启动夜神模拟器，打开内置游览器，</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_3.png"></p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_4.png"></p>
-<p>下载证书至Download文件夹下（默认就是Download目录）：</p>
+<p>点击文件助手打开电脑文件夹，将证书移动至Download文件夹下（默认就是Download目录）：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20220919105246.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20220919105329.png"></p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_5.png"></p>
 <p>回到本机中，打开CMD窗口，cd命令进入下载的夜神模拟器的bin目录下：</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_6.png"></p>
-<p>nox_adb.exe即为夜神模拟器adb模式端口，使用nox_adb.exe执行以下命令（分布执行）：</p>
-<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">.\nox_adb.exe root</span><br><span class="line">.\nox_adb.exe remount</span><br><span class="line">.\nox_adb.exe shell</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>nox_adb.exe即为夜神模拟器adb模式端口，使用nox_adb.exe执行以下命令（分步执行）：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.\nox_adb.exe root</span><br><span class="line">.\nox_adb.exe remount</span><br><span class="line">.\nox_adb.exe shell</span><br></pre></td></tr></table></figure>
 
 
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_7.png"></p>
 <p>此时在此处输入：cd sdcard&#x2F;Download</p>
 <p>执行以下命令：</p>
-<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /sdcard/Download/</span><br><span class="line"><span class="built_in">mv</span> CA.der <span class="number">9</span>a5ba575.<span class="number">0</span></span><br><span class="line"><span class="built_in">mv</span> <span class="number">9</span>a5ba575.<span class="number">0</span> /system/etc/security/cacerts/</span><br><span class="line">chmod <span class="number">644</span> /system/etc/security/cacerts/<span class="number">9</span>a5ba575.<span class="number">0</span></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mv</span> CA.der /system/etc/security/cacerts/</span><br><span class="line">chmod <span class="number">644</span> /system/etc/security/cacerts/CA.der</span><br></pre></td></tr></table></figure>
 
 <p>PS：<code>此时后缀名一定要是xxx.der不是的话要重新生成证书并保存到htdocs文件夹！</code></p>
+<p>上诉方法如果未成功，可以用这个。</p>
+<p>把CA.der改为CA.cer</p>
+<p>点系统，搜索从SD卡安装证书，找到CA.cer安装即可。</p>
 <h1 id="安装-配置Clash"><a href="#安装-配置Clash" class="headerlink" title="安装+配置Clash"></a>安装+配置Clash</h1><p>下载<a target="_blank" rel="noopener" href="https://github.com/Kr328/ClashForAndroid/tags">clash</a></p>
 <p>下载好之后在夜神模拟器中导入apk文件：</p>
 <p>直接拖入即可</p>
