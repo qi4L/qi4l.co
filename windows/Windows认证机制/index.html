@@ -871,7 +871,7 @@
 <ul>
 <li>KRB_NT_PRINCIPAL &#x3D; 1 means just the name of the principal 如dailker</li>
 <li>KRB_NT_SRV_INST &#x3D; 2 service and other unique instance (krbtgt) 如krbtgt，cifs</li>
-<li>KRB_NT_ENTERPRISE_PRINCIPAL &#x3D; 10 如 <a href="mailto:&#117;&#115;&#x65;&#x72;&#64;&#100;&#x6f;&#109;&#x61;&#x69;&#110;&#46;&#x63;&#x6f;&#109;">&#117;&#115;&#x65;&#x72;&#64;&#100;&#x6f;&#109;&#x61;&#x69;&#110;&#46;&#x63;&#x6f;&#109;</a><br>在AS_REQ里面cname 是请求的用户,这个用户名存在和不存在，返回的包有差异，可以用于枚举域内用户名。详情见<a href='#p1'>相关的安全问题&gt;用户名枚举</a></li>
+<li>KRB_NT_ENTERPRISE_PRINCIPAL &#x3D; 10 如 <a href="mailto:&#117;&#x73;&#x65;&#x72;&#64;&#x64;&#x6f;&#109;&#97;&#x69;&#x6e;&#x2e;&#x63;&#x6f;&#109;">&#117;&#x73;&#x65;&#x72;&#64;&#x64;&#x6f;&#109;&#97;&#x69;&#x6e;&#x2e;&#x63;&#x6f;&#109;</a><br>在AS_REQ里面cname 是请求的用户,这个用户名存在和不存在，返回的包有差异，可以用于枚举域内用户名。详情见<a href='#p1'>相关的安全问题&gt;用户名枚举</a></li>
 </ul>
 </li>
 <li><p>sname<br>PrincipalName 类型<br>在AS_REQ里面sname是krbtgt，类型是KRB_NT_SRV_INST</p>
@@ -2971,7 +2971,7 @@
 <p>值得注意的是，displayName不能用于登陆，虽然跟域用户名往往一样。但是这个不是直接用于登陆的我们登陆用的账号，在一些公司里面，displayName往往是中文，登陆的用户名是拼音。登陆的格式有以下两种格式。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0188d6994cbdbc4240.png"></p>
 <ol start="4">
-<li>第一种格式是UserPrincipalName，我们简称为UPN，一般的格式是用户名@域名这样的格式。<br>​<br>比如这里就是<a href="mailto:&#108;&#105;&#x73;&#x69;&#x40;&#116;&#101;&#115;&#x74;&#x2e;&#x6c;&#111;&#99;&#x61;&#x6c;">&#108;&#105;&#x73;&#x69;&#x40;&#116;&#101;&#115;&#x74;&#x2e;&#x6c;&#111;&#99;&#x61;&#x6c;</a></li>
+<li>第一种格式是UserPrincipalName，我们简称为UPN，一般的格式是用户名@域名这样的格式。<br>​<br>比如这里就是<a href="mailto:&#108;&#105;&#115;&#105;&#64;&#116;&#x65;&#115;&#x74;&#46;&#x6c;&#111;&#99;&#x61;&#x6c;">&#108;&#105;&#115;&#105;&#64;&#116;&#x65;&#115;&#x74;&#46;&#x6c;&#111;&#99;&#x61;&#x6c;</a></li>
 </ol>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e2811e15d3228c71.png"></p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b73488011e5e86a7.png"></p>

