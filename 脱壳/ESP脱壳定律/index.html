@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=JetBrains+Mono:300,300italic,400,400italic,700,700italic%7CZCOOL+KuaiLe:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/black/pace-theme-corner-indicator.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"nu1r.cn","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="前言对加壳和脱壳做了段时间的研究和了解，写一篇文记录下(以UPX壳为例)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ESP脱壳定理">
+<meta property="og:url" content="https://nu1r.cn/%E8%84%B1%E5%A3%B3/ESP%E8%84%B1%E5%A3%B3%E5%AE%9A%E5%BE%8B/index.html">
+<meta property="og:site_name" content="nu1r沉思录">
+<meta property="og:description" content="前言对加壳和脱壳做了段时间的研究和了解，写一篇文记录下(以UPX壳为例)">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown86627615_p8.jpg">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129174122.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129174544.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129174524.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129180055.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129180221.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129181032.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129181511.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129181609.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20221129181935.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129182013.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20221129184910.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129185252.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129185918.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129190323.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129191025.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129191151.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129191730.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129194934.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129195010.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129195201.png">
+<meta property="article:published_time" content="2022-11-29T09:12:16.818Z">
+<meta property="article:modified_time" content="2022-11-29T12:15:21.692Z">
+<meta property="article:author" content="nu1r">
+<meta property="article:tag" content="Reverse">
+<meta property="article:tag" content="脱壳">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown86627615_p8.jpg">
+
+
+<link rel="canonical" href="https://nu1r.cn/%E8%84%B1%E5%A3%B3/ESP%E8%84%B1%E5%A3%B3%E5%AE%9A%E5%BE%8B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nu1r.cn/%E8%84%B1%E5%A3%B3/ESP%E8%84%B1%E5%A3%B3%E5%AE%9A%E5%BE%8B/","path":"脱壳/ESP脱壳定律/","title":"ESP脱壳定理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ESP脱壳定理 | nu1r沉思录</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">nu1r沉思录</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">千里之行，始于足下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AD%A3%E6%96%87"><span class="nav-text">正文</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%99%84"><span class="nav-text">附</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%83%A8%E5%88%86%E8%AF%AD%E8%A8%80OEP"><span class="nav-text">部分语言OEP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%AC%E6%96%87%E5%87%BA%E7%8E%B0%E7%9A%84%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A"><span class="nav-text">本文出现的名词解释</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="nu1r"
+      src="/images/12.jpg">
+  <p class="site-author-name" itemprop="name">nu1r</p>
+  <div class="site-description" itemprop="description">认真思考，努力奋斗，不做娱乐圈研究员，不做实验室黑客，能真正为平台、行业甚至国家贡献自己的力量</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/nuxl1r" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;nuxl1r" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:nuxm771@163.com" title="E-Mail → mailto:nuxm771@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/nu1r" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://nu1r.cn/%E8%84%B1%E5%A3%B3/ESP%E8%84%B1%E5%A3%B3%E5%AE%9A%E5%BE%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/12.jpg">
+      <meta itemprop="name" content="nu1r">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="nu1r沉思录">
+      <meta itemprop="description" content="认真思考，努力奋斗，不做娱乐圈研究员，不做实验室黑客，能真正为平台、行业甚至国家贡献自己的力量">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ESP脱壳定理 | nu1r沉思录">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ESP脱壳定理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-11-29 17:12:16 / 修改时间：20:15:21" itemprop="dateCreated datePublished" datetime="2022-11-29T17:12:16+08:00">2022-11-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">二进制安全</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>对加壳和脱壳做了段时间的研究和了解，写一篇文记录下(以UPX壳为例)</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown86627615_p8.jpg"></p>
+<span id="more"></span>
+
+<h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><p>为了方便，找到在吾爱破解工具包中找到单文件工具并使用加壳工具对其加壳</p>
+<p>单文件工具如下</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129174122.png"></p>
+<p>首先在加壳之前查一下壳：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129174544.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129174524.png"></p>
+<p>没有壳，接下来手动对其加一个UPX壳，同样使用吾爱破解工具包中的加壳工具</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129180055.png"></p>
+<p>再检测一下：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129180221.png"></p>
+<p>加壳成功，接下来使用ESP脱壳定律进行脱壳。</p>
+<hr>
+<p>ESP脱壳定律原理：“堆栈平衡”原理</p>
+<p>在开始讨论ESP定律之前，先给复习一下一些简单的汇编知识。</p>
+<ul>
+<li>call<br>这个命令是访问子程序的一个汇编基本指令。也许你说，这个我早就知道了！别急请继续看完。call真正的意义是什么呢？我们可以这样来理解：<ol>
+<li>向堆栈中压入下一行程序的地址；</li>
+<li>JMP到call的子程序地址处。</li>
+</ol>
+</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">00401029.E8           call 004A3508</span><br><span class="line">0040102E.5A           pop edx</span><br></pre></td></tr></table></figure>
+<p>在执行了00401029以后，程序会将0040102E压入堆栈，然后JMP到004A3508地址处！</p>
+<ul>
+<li>RETN<br>与call对应的就是RETN了。对于RETN我们可以这样来理解：<ol>
+<li>将当前的ESP中指向的地址出栈；</li>
+<li>JMP到这个地址。</li>
+</ol>
+</li>
+</ul>
+<p>这个就完成了一次调用子程序的过程。在这里关键的地方是：如果我们要返回父程序，则当我们在堆栈中进行堆栈的操作的时候，一定要保证在RETN这条指令之前，ESP指向的是我们压入栈中的地址。这也就是著名的“<a target="_blank" rel="noopener" href="https://blog.csdn.net/D_R_L_T/article/details/74625872?depth_1-utm_source=distribute.pc_relevant.none-task&utm_source=distribute.pc_relevant.none-task">堆栈平衡</a>”原理！</p>
+<blockquote>
+<p>ESP定律的适用范围：几乎全部的压缩壳，部分加密壳。只要是在JMP到OEP后的壳，理论上我们都可以使用。但是在何时下断点避开校验，何时下断OD才能断下来，这还需要多多总结和多多积累。</p>
+</blockquote>
+<hr>
+<p>将加壳后的程序载入到OD中后，点击否</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129181032.png"></p>
+<p>OD界面如下：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129181511.png"></p>
+<p>按下F8开始单步执行:</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129181609.png"></p>
+<p>当有且只有ESP和EIP为红色时，我们可以用ESP定律了（也可以直接在下面的Command窗口中输入dd 0019FF58后回车）</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20221129181935.png"></p>
+<p>此时有：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129182013.png"></p>
+<p>下硬件断点：（这个操作也可以在command窗口输入 HR 0019FF58回车后完成，然后我们按F9运行程序，此时程序会暂停在我们设置的断点位置）</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20221129184910.png"></p>
+<p>这两种方法最终的效果都会在数据窗口中跟随到0042E19F这个地址，然后我们可以右键那一段地址任意HEX设置断点→硬件访问→word型，按下F9执行，EIP停在：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129185252.png"></p>
+<p>然后我们F8单步走，到了jnz位置后不要再按F8了（这是向上跳转的），我们用鼠标点击她的下一行然后按F4，让程序转到跳转下面继续运行（sub esp,-0x80），到达jmp后我们必须跳过去，因为接下来就有可能是程序的OEP领空。</p>
+<blockquote>
+<p>OEP：程序的入口点，软件加壳就是隐藏了OEP（或者用了假的OEP）</p>
+</blockquote>
+<p>这里就是易语言&#x2F;VC程序的OEP：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129185918.png"></p>
+<p>然后就可以脱壳了，脱壳前先把断点清理掉，以免出错 <code>调试→硬件断点→删除</code></p>
+<p>此时程序真正的OEP为：0040438E</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129190323.png"></p>
+<p>打开吾爱破解工具包的Scylla</p>
+<p>运行相同的进程：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129191025.png"></p>
+<p>在 <code>Scylla</code> 中 <code>附加活动进程</code> ：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129191151.png"></p>
+<p>在IAT信息框中的OEP更改为真正的OEP：0040438E，然后自动查找IAT并获取输入表（出现下图点击否）</p>
+<p>最终如下图所示：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129191730.png"></p>
+<p>然后转储到文件，保存为：UPX Unpacker_dump.exe</p>
+<p>最后修复转储后的文件，选择UPX Unpacker_dump.exe，自动保存为UPX Unpacker_dump_SCY.exe</p>
+<p>打开UPX Unpacker_dump_SCY.exe，正常运行</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129194934.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129195010.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221129195201.png"></p>
+<h1 id="附"><a href="#附" class="headerlink" title="附"></a>附</h1><p>程序校验值</p>
+<p>文件：吾爱破解工具包\Tools\Unpackers\UPX Unpacker.exe（加UPX壳前）<br>大小：176,128 字节<br>修改时间: 2008-11-6 11:37:36<br>MD5：faf33840583f59d9674ad883d44528a2<br>SHA1：6c41c63ab3c76ea64733b5a1c180dfd0187a7b3f<br>CRC32：BFF74C9D</p>
+<p>文件：C:\Toolse\Unpackers1\UPX Unpacker.exe（加UPX壳后）<br>大小：132,608 字节<br>修改时间: 2008-11-6 11:37:36<br>MD5：d8d90364517023ed1f7c77885550044d<br>SHA1：c9b729798a67fdd57571b1029dced0e3531134ac<br>CRC32：36BA3444</p>
+<p>文件：C:\Toolse\Unpackers1\UPX Unpacker_dump.exe<br>大小：187,392 字节<br>修改时间: 2022-11-29 18:48:59<br>MD5：f65c7935a8f1d7ff0e638658a37e7b6e<br>SHA1：8306db18f4992935666662a8e4d94510c382baf7<br>CRC32：F0898FBB</p>
+<p>文件：C:\Toolse\Unpackers1\UPX Unpacker_dump_SCY.exe<br>大小：188,928 字节<br>修改时间: 2022-11-29 19:49:13<br>MD5：5d65612b9e645f8271813bf93905de33<br>SHA1：752cdd8f1a69cc6b3f2325db4d719f447d61d2f0<br>CRC32：6B2B3105</p>
+<h1 id="部分语言OEP"><a href="#部分语言OEP" class="headerlink" title="部分语言OEP"></a>部分语言OEP</h1><ul>
+<li><p>delphi</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">55            PUSH EBP</span><br><span class="line">8BEC          MOV EBP,ESP</span><br><span class="line">83C4 F0       ADD ESP,-10</span><br><span class="line">B8 A86F4B00   MOV EAX,PE.004B6FA8</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>vc++</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">55            PUSH EBP</span><br><span class="line">8BEC          MOV EBP,ESP</span><br><span class="line">83EC 44       SUB ESP,44</span><br><span class="line">56            PUSH ESI</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>vc6.0</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">55                 push ebp</span><br><span class="line">8BEC               mov ebp,esp</span><br><span class="line">6A FF              push -1</span><br><span class="line">vc7.0</span><br><span class="line">6A 70              push 70</span><br><span class="line">68 50110001        push hh.01001150</span><br><span class="line">E8 1D020000        call hh.010017B0</span><br><span class="line">33DB               xor ebx,ebx</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>vb</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">00401166  - FF25 6C104000   JMP DWORD PTR DS:[&lt;&amp;MSVBVM60.#100&gt;]      ; MSVBVM60.ThunRTMain</span><br><span class="line">0040116C &gt;  68 147C4000     PUSH PACKME.00407C14</span><br><span class="line">00401171    E8 F0FFFFFF     CALL &lt;JMP.&amp;MSVBVM60.#100&gt;</span><br><span class="line">00401176    0000            ADD BYTE PTR DS:[EAX],AL</span><br><span class="line">00401178    0000            ADD BYTE PTR DS:[EAX],AL</span><br><span class="line">0040117A    0000            ADD BYTE PTR DS:[EAX],AL</span><br><span class="line">0040117C    3000            XOR BYTE PTR DS:[EAX],AL</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>bc++</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">0040163C &gt; $ /EB 10         JMP SHORT BCLOCK.0040164E</span><br><span class="line">0040163E     |66            DB 66                                    ;  CHAR &#x27;f&#x27;</span><br><span class="line">0040163F     |62            DB 62                                    ;  CHAR &#x27;b&#x27;</span><br><span class="line">00401640     |3A            DB 3A                                    ;  CHAR &#x27;:&#x27;</span><br><span class="line">00401641     |43            DB 43                                    ;  CHAR &#x27;C&#x27;</span><br><span class="line">00401642     |2B            DB 2B                                    ;  CHAR &#x27;+&#x27;</span><br><span class="line">00401643     |2B            DB 2B                                    ;  CHAR &#x27;+&#x27;</span><br><span class="line">00401644     |48            DB 48                                    ;  CHAR &#x27;H&#x27;</span><br><span class="line">00401645     |4F            DB 4F                                    ;  CHAR &#x27;O&#x27;</span><br><span class="line">00401646     |4F            DB 4F                                    ;  CHAR &#x27;O&#x27;</span><br><span class="line">00401647     |4B            DB 4B                                    ;  CHAR &#x27;K&#x27;</span><br><span class="line">00401648     |90            NOP</span><br><span class="line">00401649     |E9            DB E9</span><br><span class="line">0040164A   . |98E04E00      DD OFFSET BCLOCK.___CPPdebugHook</span><br><span class="line">0040164E   &gt; \A1 8BE04E00   MOV EAX,DWORD PTR DS:[4EE08B]</span><br><span class="line">00401653   .  C1E0 02       SHL EAX,2</span><br><span class="line">00401656   .  A3 8FE04E00   MOV DWORD PTR DS:[4EE08F],EAX</span><br><span class="line">0040165B   .  52            PUSH EDX</span><br><span class="line">0040165C   .  6A 00         PUSH 0                                   ; /pModule = NULL</span><br><span class="line">0040165E   .  E8 DFBC0E00   CALL &lt;JMP.&amp;KERNEL32.GetModuleHandleA&gt;    ; \GetModuleHandleA</span><br><span class="line">00401663   .  8BD0          MOV EDX,EAX</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>dasm</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">00401000 &gt;/$  6A 00         PUSH 0                                   ; /pModule = NULL</span><br><span class="line">00401002  |.  E8 C50A0000   CALL &lt;JMP.&amp;KERNEL32.GetModuleHandleA&gt;    ; \GetModuleHandleA</span><br><span class="line">00401007  |.  A3 0C354000   MOV DWORD PTR DS:[40350C],EAX</span><br><span class="line">0040100C  |.  E8 B50A0000   CALL &lt;JMP.&amp;KERNEL32.GetCommandLineA&gt;     ; [GetCommandLineA</span><br><span class="line">00401011  |.  A3 10354000   MOV DWORD PTR DS:[403510],EAX</span><br><span class="line">00401016  |.  6A 0A         PUSH 0A                                  ; /Arg4 = 0000000A</span><br><span class="line">00401018  |.  FF35 10354000 PUSH DWORD PTR DS:[403510]               ; |Arg3 = 00000000</span><br><span class="line">0040101E  |.  6A 00         PUSH 0                                   ; |Arg2 = 00000000</span><br><span class="line">00401020  |.  FF35 0C354000 PUSH DWORD PTR DS:[40350C]               ; |Arg1 = 00000000</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="本文出现的名词解释"><a href="#本文出现的名词解释" class="headerlink" title="本文出现的名词解释"></a>本文出现的名词解释</h1><p>EP段：EntryPoint,入口点<br>OD：<br>HR 访问时进行硬件中断<br>DD 转存在堆栈格式<br>EIP：寄存器的一种，EIP寄存器里存储的是CPU下次要执行的指令的地址<br>ESP：寄存器的一种，寄存器里存储的是是栈的栈底指针，通常叫栈基址</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Reverse/" rel="tag"><i class="fa fa-tag"></i> Reverse</a>
+              <a href="/tags/%E8%84%B1%E5%A3%B3/" rel="tag"><i class="fa fa-tag"></i> 脱壳</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaScript/nodejs%E6%B2%99%E7%9B%92%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90/" rel="prev" title="nodejs沙盒逃逸分析">
+                  <i class="fa fa-chevron-left"></i> nodejs沙盒逃逸分析
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">nu1r</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.2/katex.min.css" integrity="sha256-oWCabCfPd4Oi21wqZezBSz/anto4VYcJqc9sM9IzQTk=" crossorigin="anonymous">
+  <script class="next-config" data-name="katex" type="application/json">{"copy_tex_js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.2/contrib/copy-tex.min.js","integrity":"sha256-Us54+rSGDSTvIhKKUs4kygE2ipA0RXpWWh0/zLqw3bs="}}</script>
+  <script src="/js/third-party/math/katex.js"></script>
+
+
+
+</body>
+</html>
