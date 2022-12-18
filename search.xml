@@ -809,7 +809,7 @@
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%9B%BE%E7%89%87-84.png"></p>
 <p>运行 <code>Inject_Agent_Spring</code> 类，在doFilter方法中注入恶意代码，成功执行</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%9B%BE%E7%89%87-85.png"></p>
-<p>这是个基础实习demo，未解决留下Jar包问题与防检测，不建议直接使用。</p>
+<p>这是个基础实现demo，未解决留下Jar包问题与防检测，不建议直接使用。</p>
 <h2 id="实现在Native层"><a href="#实现在Native层" class="headerlink" title="实现在Native层"></a>实现在Native层</h2><p>看了rebeyond师傅的<a href="https://xz.aliyun.com/t/10075">文章</a>,后</p>
 <p>首先<code>Native</code>层这部分常见一些本地服务和一些链接库等。这一层的一个特点就是通过C和C++语言实现。比如我们现在要执行一个复杂运算，如果通过java代码去实现，那么效率会非常低，此时可以选择通过C或C++代码去实现，然后和上层的Java代码通信(JNI机制)。</p>
 <p>rebeyond师傅的整个分析过程非常的PWN，这里也是不在复述。</p>
@@ -1087,7 +1087,7 @@
 <ul>
 <li>KRB_NT_PRINCIPAL &#x3D; 1 means just the name of the principal 如dailker</li>
 <li>KRB_NT_SRV_INST &#x3D; 2 service and other unique instance (krbtgt) 如krbtgt，cifs</li>
-<li>KRB_NT_ENTERPRISE_PRINCIPAL &#x3D; 10 如 <a href="mailto:&#117;&#x73;&#x65;&#114;&#64;&#100;&#x6f;&#x6d;&#97;&#x69;&#x6e;&#x2e;&#x63;&#111;&#109;">&#117;&#x73;&#x65;&#114;&#64;&#100;&#x6f;&#x6d;&#97;&#x69;&#x6e;&#x2e;&#x63;&#111;&#109;</a><br>在AS_REQ里面cname 是请求的用户,这个用户名存在和不存在，返回的包有差异，可以用于枚举域内用户名。详情见<a href='#p1'>相关的安全问题&gt;用户名枚举</a></li>
+<li>KRB_NT_ENTERPRISE_PRINCIPAL &#x3D; 10 如 <a href="mailto:&#x75;&#115;&#x65;&#x72;&#x40;&#x64;&#111;&#x6d;&#97;&#x69;&#x6e;&#46;&#99;&#111;&#x6d;">&#x75;&#115;&#x65;&#x72;&#x40;&#x64;&#111;&#x6d;&#97;&#x69;&#x6e;&#46;&#99;&#111;&#x6d;</a><br>在AS_REQ里面cname 是请求的用户,这个用户名存在和不存在，返回的包有差异，可以用于枚举域内用户名。详情见<a href='#p1'>相关的安全问题&gt;用户名枚举</a></li>
 </ul>
 </li>
 <li><p>sname<br>PrincipalName 类型<br>在AS_REQ里面sname是krbtgt，类型是KRB_NT_SRV_INST</p>
@@ -3187,7 +3187,7 @@
 <p>值得注意的是，displayName不能用于登陆，虽然跟域用户名往往一样。但是这个不是直接用于登陆的我们登陆用的账号，在一些公司里面，displayName往往是中文，登陆的用户名是拼音。登陆的格式有以下两种格式。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0188d6994cbdbc4240.png"></p>
 <ol start="4">
-<li>第一种格式是UserPrincipalName，我们简称为UPN，一般的格式是用户名@域名这样的格式。<br>​<br>比如这里就是<a href="mailto:&#108;&#105;&#115;&#105;&#x40;&#x74;&#101;&#x73;&#x74;&#x2e;&#x6c;&#111;&#99;&#97;&#108;">&#108;&#105;&#115;&#105;&#x40;&#x74;&#101;&#x73;&#x74;&#x2e;&#x6c;&#111;&#99;&#97;&#108;</a></li>
+<li>第一种格式是UserPrincipalName，我们简称为UPN，一般的格式是用户名@域名这样的格式。<br>​<br>比如这里就是<a href="mailto:&#x6c;&#x69;&#115;&#105;&#x40;&#x74;&#x65;&#115;&#116;&#46;&#x6c;&#x6f;&#x63;&#97;&#108;">&#x6c;&#x69;&#115;&#105;&#x40;&#x74;&#x65;&#115;&#116;&#46;&#x6c;&#x6f;&#x63;&#97;&#108;</a></li>
 </ol>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e2811e15d3228c71.png"></p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b73488011e5e86a7.png"></p>
@@ -5785,58 +5785,6 @@
       </categories>
       <tags>
         <tag>WP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>记某次代码审计</title>
-    <url>/read/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>某个博客框架的最新版</p>
-<span id="more"></span>
-
-<h1 id="调用链分析"><a href="#调用链分析" class="headerlink" title="调用链分析"></a>调用链分析</h1><ul>
-<li>于 <code>include.lib.function.base.php</code> 处发现一个<code>file_get_contents</code> 函数：</li>
-</ul>
-<p>   <img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_Q4KCHYHMR9.png"></p>
-<ul>
-<li><p>回调<code>imageCropAndResize</code> 方法看<code>src_image</code> 参数是否可控</p>
-<p>又于该文件夹中发现<code>resizeImage</code> 方法调用了<code>imageCropAndResize</code> 方法</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage__utB-_B7hI.png"></p>
-</li>
-<li><p>回调</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_AZePoqLEO8.png"></p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_Q1D3dnAZpY.png"></p>
-<p>由上图可见tmpFile可控</p>
-</li>
-<li><p>回调，得到过滤规则</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_lV8PsVFEq5.png"></p>
-</li>
-<li><p>回调</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_M2IXbbl6Iv.png"></p>
-<p>头像上传处的功能点的tmpFile参数</p>
-</li>
-<li><p>回调，即可发现最开始调用的位置。</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_NK059U6L02.png"></p>
-</li>
-</ul>
-<h1 id="调用链"><a href="#调用链" class="headerlink" title="调用链"></a>调用链</h1><p>由以上分析可得调用链为：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">admin.blogger.php</span><br><span class="line">  --&gt;uploadCropImg</span><br><span class="line">      --&gt;upload2local</span><br><span class="line">          --&gt;upload</span><br><span class="line">              --&gt;resizeImage</span><br><span class="line">                  --&gt;imageCropAndResize</span><br><span class="line">                      --&gt;include.lib.[function.base.php]</span><br></pre></td></tr></table></figure>
-
-
-<ul>
-<li><p>调试可知<code>tmpFile</code>参数为临时文件名</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_i6HyBtdKL5.png"></p>
-<p>可以通过POST的方式上传文件，对<code>$_FILES</code>数组产生影响，进而影响tmp_name，导致任意文件读取。</p>
-</li>
-</ul>
-<p>验证</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_QdZKgnQGsQ.png"></p>
-]]></content>
-      <categories>
-        <category>Web安全</category>
-      </categories>
-      <tags>
-        <tag>PHP</tag>
-        <tag>代审</tag>
       </tags>
   </entry>
   <entry>
