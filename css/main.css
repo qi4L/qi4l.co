@@ -2680,22 +2680,10 @@ mark.search-keyword {
   opacity: 1;
 }
 /* 标题 */
-.posts-expand .post-title-link {
-/* 设置字体颜色 */
-  color: #222;
-}
 /* 文章列表样式 */
 .main-inner {
   background-color: rgba(255,255,255,0);
   padding: 0px 40px 40px 40px;
-}
-/* 侧边、分页 rgba(255, 255, 255, 1);   0 和 1 是样式透明度 */
-.header-inner,
-.sidebar-inner,
-.pagination {
-  background-color: #fff;
-  border-radius: 30px 30px 30px 30px !important;
-  box-shadow: 8px 7px 2px 0 rgba(0,0,0,0.12), 7px 4px 1px -2px rgba(0,0,0,0.06), 0 1px 5px 0 rgba(0,0,0,0.12) !important;
 }
 /* 黑色圆顶样式 */
 .site-brand-container {
