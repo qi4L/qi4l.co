@@ -591,7 +591,7 @@
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
   </noscript>
-</head>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
 
 <body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
   <div class="headband"></div>
@@ -857,7 +857,7 @@
 <ul>
 <li>KRB_NT_PRINCIPAL &#x3D; 1 means just the name of the principal 如dailker</li>
 <li>KRB_NT_SRV_INST &#x3D; 2 service and other unique instance (krbtgt) 如krbtgt，cifs</li>
-<li>KRB_NT_ENTERPRISE_PRINCIPAL &#x3D; 10 如 <span class="exturl" data-url="bWFpbHRvOiYjeDc1OyYjeDczOyYjMTAxOyYjeDcyOyYjeDQwOyYjMTAwOyYjeDZmOyYjeDZkOyYjeDYxOyYjMTA1OyYjMTEwOyYjeDJlOyYjOTk7JiMxMTE7JiN4NmQ7">&#x75;&#x73;&#101;&#x72;&#x40;&#100;&#x6f;&#x6d;&#x61;&#105;&#110;&#x2e;&#99;&#111;&#x6d;<i class="fa fa-external-link-alt"></i></span><br>在AS_REQ里面cname 是请求的用户,这个用户名存在和不存在，返回的包有差异，可以用于枚举域内用户名。详情见<a href='#p1'>相关的安全问题&gt;用户名枚举</a></li>
+<li>KRB_NT_ENTERPRISE_PRINCIPAL &#x3D; 10 如 <span class="exturl" data-url="bWFpbHRvOiYjeDc1OyYjMTE1OyYjMTAxOyYjMTE0OyYjNjQ7JiN4NjQ7JiMxMTE7JiMxMDk7JiM5NzsmI3g2OTsmIzExMDsmI3gyZTsmI3g2MzsmI3g2ZjsmI3g2ZDs=">&#x75;&#115;&#101;&#114;&#64;&#x64;&#111;&#109;&#97;&#x69;&#110;&#x2e;&#x63;&#x6f;&#x6d;<i class="fa fa-external-link-alt"></i></span><br>在AS_REQ里面cname 是请求的用户,这个用户名存在和不存在，返回的包有差异，可以用于枚举域内用户名。详情见<a href='#p1'>相关的安全问题&gt;用户名枚举</a></li>
 </ul>
 </li>
 <li><p>sname<br>PrincipalName 类型<br>在AS_REQ里面sname是krbtgt，类型是KRB_NT_SRV_INST</p>
@@ -2957,7 +2957,7 @@
 <p>值得注意的是，displayName不能用于登陆，虽然跟域用户名往往一样。但是这个不是直接用于登陆的我们登陆用的账号，在一些公司里面，displayName往往是中文，登陆的用户名是拼音。登陆的格式有以下两种格式。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0188d6994cbdbc4240.png"></p>
 <ol start="4">
-<li>第一种格式是UserPrincipalName，我们简称为UPN，一般的格式是用户名@域名这样的格式。<br>​<br>比如这里就是<span class="exturl" data-url="bWFpbHRvOiYjeDZjOyYjMTA1OyYjeDczOyYjMTA1OyYjNjQ7JiMxMTY7JiN4NjU7JiN4NzM7JiMxMTY7JiN4MmU7JiMxMDg7JiN4NmY7JiN4NjM7JiM5NzsmI3g2Yzs=">&#x6c;&#105;&#x73;&#105;&#64;&#116;&#x65;&#x73;&#116;&#x2e;&#108;&#x6f;&#x63;&#97;&#x6c;<i class="fa fa-external-link-alt"></i></span></li>
+<li>第一种格式是UserPrincipalName，我们简称为UPN，一般的格式是用户名@域名这样的格式。<br>​<br>比如这里就是<span class="exturl" data-url="bWFpbHRvOiYjMTA4OyYjeDY5OyYjeDczOyYjeDY5OyYjeDQwOyYjMTE2OyYjeDY1OyYjMTE1OyYjeDc0OyYjeDJlOyYjeDZjOyYjeDZmOyYjOTk7JiM5NzsmIzEwODs=">&#108;&#x69;&#x73;&#x69;&#x40;&#116;&#x65;&#115;&#x74;&#x2e;&#x6c;&#x6f;&#99;&#97;&#108;<i class="fa fa-external-link-alt"></i></span></li>
 </ol>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e2811e15d3228c71.png"></p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b73488011e5e86a7.png"></p>
@@ -3674,9 +3674,10 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
 <script src="/js/third-party/search/local-search.js"></script>
@@ -3699,6 +3700,26 @@
   <script src="/js/third-party/math/katex.js"></script>
 
 
+<script src="https://unpkg.com/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: '32px',
+  left: 'unset',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
 
 </body>
 </html>
