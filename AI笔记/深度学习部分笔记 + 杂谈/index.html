@@ -26,30 +26,40 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"nu1r.cn","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.14.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="前言做pwn的师傅肯定会遇到这个疑惑，为什么32位和64位的ROP写起来不一样？">
+    <meta name="description" content="前言每天雷打不动3小时啃深度学习，差不多1个半月搞好">
 <meta property="og:type" content="article">
-<meta property="og:title" content="32位与64位ROP详解">
-<meta property="og:url" content="https://nu1r.cn/PWN/32%E4%BD%8D%E4%B8%8E64%E4%BD%8DROP%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:title" content="深度学习部分笔记 + 杂谈">
+<meta property="og:url" content="https://nu1r.cn/AI%E7%AC%94%E8%AE%B0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E9%83%A8%E5%88%86%E7%AC%94%E8%AE%B0%20+%20%E6%9D%82%E8%B0%88/index.html">
 <meta property="og:site_name" content="nu1r沉思录">
-<meta property="og:description" content="前言做pwn的师傅肯定会遇到这个疑惑，为什么32位和64位的ROP写起来不一样？">
+<meta property="og:description" content="前言每天雷打不动3小时啃深度学习，差不多1个半月搞好">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownfMxenQwX7syu6Ri.png">
-<meta property="article:published_time" content="2022-03-25T16:00:00.000Z">
-<meta property="article:modified_time" content="2022-03-25T16:00:00.000Z">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128102318.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128102643.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128102739.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128102921.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128102934.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128103228.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128103401.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128103431.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128103534.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128103645.png">
+<meta property="article:published_time" content="2023-01-27T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-01-27T16:00:00.000Z">
 <meta property="article:author" content="nu1r">
-<meta property="article:tag" content="ROP">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="深度学习">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownfMxenQwX7syu6Ri.png">
+<meta name="twitter:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128102318.png">
 
 
-<link rel="canonical" href="https://nu1r.cn/PWN/32%E4%BD%8D%E4%B8%8E64%E4%BD%8DROP%E8%AF%A6%E8%A7%A3/">
+<link rel="canonical" href="https://nu1r.cn/AI%E7%AC%94%E8%AE%B0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E9%83%A8%E5%88%86%E7%AC%94%E8%AE%B0%20+%20%E6%9D%82%E8%B0%88/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nu1r.cn/PWN/32%E4%BD%8D%E4%B8%8E64%E4%BD%8DROP%E8%AF%A6%E8%A7%A3/","path":"PWN/32位与64位ROP详解/","title":"32位与64位ROP详解"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nu1r.cn/AI%E7%AC%94%E8%AE%B0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E9%83%A8%E5%88%86%E7%AC%94%E8%AE%B0%20+%20%E6%9D%82%E8%B0%88/","path":"AI笔记/深度学习部分笔记 + 杂谈/","title":"深度学习部分笔记 + 杂谈"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>32位与64位ROP详解 | nu1r沉思录</title>
+<title>深度学习部分笔记 + 杂谈 | nu1r沉思录</title>
   
 
 
@@ -151,7 +161,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ROP"><span class="nav-text">ROP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFROP"><span class="nav-text">什么是ROP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81ROP"><span class="nav-text">为什么要ROP</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#32%E4%BD%8D"><span class="nav-text">32位</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#64%E4%BD%8D"><span class="nav-text">64位</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E4%BC%A0%E5%8F%82"><span class="nav-text">寄存器传参</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A0%86%E6%A0%88%E5%B9%B3%E8%A1%A1"><span class="nav-text">堆栈平衡</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%84%E9%80%A0payload"><span class="nav-text">构造payload</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE"><span class="nav-text">前置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80"><span class="nav-text">神经网络前置基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0"><span class="nav-text">线性函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD"><span class="nav-text">前向传播</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD"><span class="nav-text">反向传播</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0"><span class="nav-text">深度学习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-text">深度学习的概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-text">机器学习和深度学习的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6"><span class="nav-text">常见深度学习框架</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="nav-text">神经网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%95%E5%B1%82%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="nav-text">单层神经网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%84%9F%E7%9F%A5%E6%9C%BA"><span class="nav-text">感知机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E5%B1%82%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="nav-text">多层神经网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%98%B6%E8%B7%83%E5%87%BD%E6%95%B0"><span class="nav-text">阶跃函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9D%82%E8%B0%88-%E6%80%BB%E7%BB%93"><span class="nav-text">杂谈 + 总结</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -212,7 +222,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://nu1r.cn/PWN/32%E4%BD%8D%E4%B8%8E64%E4%BD%8DROP%E8%AF%A6%E8%A7%A3/">
+    <link itemprop="mainEntityOfPage" href="https://nu1r.cn/AI%E7%AC%94%E8%AE%B0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E9%83%A8%E5%88%86%E7%AC%94%E8%AE%B0%20+%20%E6%9D%82%E8%B0%88/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/12.jpg">
@@ -225,12 +235,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="32位与64位ROP详解 | nu1r沉思录">
+      <meta itemprop="name" content="深度学习部分笔记 + 杂谈 | nu1r沉思录">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          32位与64位ROP详解
+          深度学习部分笔记 + 杂谈
         </h1>
 
         <div class="post-meta-container">
@@ -241,7 +251,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-03-26 00:00:00" itemprop="dateCreated datePublished" datetime="2022-03-26T00:00:00+08:00">2022-03-26</time>
+      <time title="创建时间：2023-01-28 00:00:00" itemprop="dateCreated datePublished" datetime="2023-01-28T00:00:00+08:00">2023-01-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-01-28 00:00:00" itemprop="dateModified" datetime="2022-01-28T00:00:00+08:00">2022-01-28</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -249,7 +266,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">二进制安全</span></a>
+          <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
         </span>
     </span>
 
@@ -263,42 +280,46 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>做pwn的师傅肯定会遇到这个疑惑，为什么32位和64位的ROP写起来不一样？</p>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>每天雷打不动3小时啃深度学习，差不多1个半月搞好</p>
 <span id="more"></span>
 
-<h1 id="ROP"><a href="#ROP" class="headerlink" title="ROP"></a>ROP</h1><h2 id="什么是ROP"><a href="#什么是ROP" class="headerlink" title="什么是ROP"></a>什么是ROP</h2><p>ROP的全称为<code>Return-oriented programming</code>（返回导向编程），也可以理解为面向返回地址的编程，这是一种高级的内存攻击技术可以用来绕过现代操作系统的各种通用防御（比如内存不可执行和代码签名等）。通过上一篇文章栈溢出，我们可以发现栈溢出的控制点是ret处，那么ROP的核心思想就是利用以ret结尾的指令序列把栈中的应该返回EIP的地址更改成我们需要的值，从而控制程序的执行流程。</p>
-<h2 id="为什么要ROP"><a href="#为什么要ROP" class="headerlink" title="为什么要ROP"></a><strong>为什么要ROP</strong></h2><p>探究原因之前，我们先看一下什么是NX(DEP) NX即No-execute（不可执行）的意思，NX（DEP）的基本原理是将数据所在内存页标识为不可执行，当程序溢出成功转入shellcode时，程序会尝试在数据页面上执行指令，此时CPU就会抛出异常，而不是去执行恶意指令。随着 NX 保护的开启，以往直接向栈或者堆上直接注入代码的方式难以继续发挥效果。所以就有了各种绕过办法，ROP就是一种。</p>
-<h1 id="32位"><a href="#32位" class="headerlink" title="32位"></a>32位</h1><p>32位程序的栈溢出，只有输入的字节填满栈空间，和返回地址，即可劫持栈帧，达到控制执行流的效果,</p>
-<p>假设栈开辟了20字节的空间，rbp为8字节，由此可得payload如下</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload = <span class="string">b&#x27;A&#x27;</span>*(<span class="number">0x20</span>+<span class="number">0x8</span>) + p32(system_addr) + p32(bin_addr)</span><br></pre></td></tr></table></figure>
-
-
-
-
-<h1 id="64位"><a href="#64位" class="headerlink" title="64位"></a>64位</h1><h2 id="寄存器传参"><a href="#寄存器传参" class="headerlink" title="寄存器传参"></a>寄存器传参</h2><p>64位和32位程序的不同点之一就是，它的前6个参数是通过寄存器传递的，有更多的参数才用栈，所以构造rop链的方式和32位不同。</p>
-<p>分别是<code>rdi</code>，<code>rsi</code>，<code>rdx</code>，<code>rcx</code>，<code>r8</code>，<code>r9</code>作为第1-6个参数。rax作为返回值 64位没有栈帧的指针，32位用ebp作为栈帧指针，64位取消了这个设定，所以rbp作为通用寄存器使用。</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownfMxenQwX7syu6Ri.png"></p>
-<h2 id="堆栈平衡"><a href="#堆栈平衡" class="headerlink" title="堆栈平衡"></a>堆栈平衡</h2><p>还有一点要考虑的就是堆栈平衡，那么问题来了，什么是堆栈平衡。</p>
+<h1 id="前置"><a href="#前置" class="headerlink" title="前置"></a>前置</h1><ul>
+<li>线性代数</li>
+<li>概率论</li>
+</ul>
+<p>个人认为那些听课理解不了的，可能是对这两块没有什么墨水。</p>
+<h1 id="神经网络前置基础"><a href="#神经网络前置基础" class="headerlink" title="神经网络前置基础"></a>神经网络前置基础</h1><h2 id="线性函数"><a href="#线性函数" class="headerlink" title="线性函数"></a>线性函数</h2><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128102318.png"></p>
+<h2 id="前向传播"><a href="#前向传播" class="headerlink" title="前向传播"></a>前向传播</h2><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128102643.png"></p>
+<h2 id="反向传播"><a href="#反向传播" class="headerlink" title="反向传播"></a>反向传播</h2><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128102739.png"></p>
+<h1 id="深度学习"><a href="#深度学习" class="headerlink" title="深度学习"></a>深度学习</h1><h2 id="深度学习的概念"><a href="#深度学习的概念" class="headerlink" title="深度学习的概念"></a>深度学习的概念</h2><p>深度学习(英语：Deep Learning)是机器学习的分支，是一种以人工神经网络为构架，对数据进行特征学习的算法</p>
+<h2 id="机器学习和深度学习的区别"><a href="#机器学习和深度学习的区别" class="headerlink" title="机器学习和深度学习的区别"></a>机器学习和深度学习的区别</h2><ul>
+<li><p>区别1：特征提取</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128102921.png"></p>
+<p>从特征提取的角度出发</p>
 <ol>
-<li>如何要返回父程序，则当我们在堆栈中进行堆栈的操作时候，一定要保证在RET这条指令之前，ESP指向的是我们压入栈中的地址</li>
-<li>如果通过堆栈传递了参数了，那么在函数执行完毕后，要平衡参数导致的堆栈变化</li>
+<li>机器学习需要有人工提取特征码的过程</li>
+<li>深度学习没有复杂的人工提取特征码的过程，特征码提取过程可以通过深度神经网络自动完成，也就是自动进行特征抽取</li>
 </ol>
-<p>人话就是，当函数在一步步执行的时候 一直到ret执行之前，堆栈栈顶的地址 一定要是call指令的下一个地址。</p>
-<p>也就是说函数执行前一直到函数执行结束，函数里面的堆栈是要保持不变的。</p>
-<p>如果堆栈变化了，那么，要在ret执行前将堆栈恢复成原来的样子。</p>
-<h2 id="构造payload"><a href="#构造payload" class="headerlink" title="构造payload"></a>构造payload</h2><p>64位还要考虑堆栈平衡，由此可以有3种payload</p>
-<p>清空rdi寄存器，ret维持堆栈平衡，将GOT表地址和PLT表地址弹到rdi寄存器，在通过libc搜索得到libc版本</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 泄露libc地址</span></span><br><span class="line">payload1=padding+p64(pop_rdi_ret) + p64(puts_got_addr) + p64(puts_plt_addr)</span><br></pre></td></tr></table></figure>
-
-<p>塞满栈空间和返回地址，维持堆栈平衡，清空rdi寄存器获取偏移地址，塞入&#x2F;bin&#x2F;sh字符和system函数</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 命令执行</span></span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span> * (<span class="number">0x0f</span>+<span class="number">0x08</span>) + p64(ret_addr) + p64(pop_rdi_addr) + p64(bin_sh_addr) + p64(system_addr)</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 寄存器调用顺序：rdi、rsi、rdx、rcx、r8、r9</span></span><br><span class="line"><span class="comment"># 先利用pop+ret将bin_sh_addr地址弹到rdi寄存器中去，再调用system函数来执行</span></span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span> * (<span class="number">0x0f</span>+<span class="number">0x08</span>) + p64(pop_rdi_addr) + p64(bin_sh_addr) + p64(system_addr)</span><br></pre></td></tr></table></figure>
-
-<p>前两个payload利用64位程序函数调用参数规则构造</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// ret堆栈平衡，直接返回bin_sh_addr处也可以获得系统权限。</span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span> * (<span class="number">0x0f</span>+<span class="number">0x08</span>) + p64(ret_addr) + p64(bin_sh_addr)</span><br></pre></td></tr></table></figure>
-
-
+</li>
+<li><p>区别2：数据量</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128102934.png"></p>
+<p>从数据量角度触发</p>
+<p>1.深度学习需要大量的训练数据集，会有更高的效果</p>
+<p>2.深度学习训练深度神经网络需要大呈的算力，因为其中有更多的参数</p>
+</li>
+</ul>
+<h2 id="常见深度学习框架"><a href="#常见深度学习框架" class="headerlink" title="常见深度学习框架"></a>常见深度学习框架</h2><p>目前企业中常见的深度学习框架有很多，<code>TensorFlow</code>, <code>Caffe2</code>, <code>Keras</code>,<code>Theano</code>, <code>PyTorch</code>,<code>Chainer</code>, <code>DyNet</code>,<code>MXNet</code>, <code>and CNTK</code>等等</p>
+<p>其中 <code>tensorflow</code> 和 <code>Kears</code> 是 google 出品的，使用者很多，但是其语法晦涩而且和python的语法不尽相同，对于入门玩家而言上手难度较高。</p>
+<p>facebook 出的 PyTorch ，PyTorch的使用和python的语法相同，0Numpy的操作，并且 PyTorch使用的是动态计算，会让代码的调试变的更加简单。</p>
+<h1 id="神经网络"><a href="#神经网络" class="headerlink" title="神经网络"></a>神经网络</h1><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128103228.png"></p>
+<h1 id="单层神经网络"><a href="#单层神经网络" class="headerlink" title="单层神经网络"></a>单层神经网络</h1><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128103401.png"></p>
+<h1 id="感知机"><a href="#感知机" class="headerlink" title="感知机"></a>感知机</h1><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128103431.png"></p>
+<h1 id="多层神经网络"><a href="#多层神经网络" class="headerlink" title="多层神经网络"></a>多层神经网络</h1><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128103534.png"></p>
+<h1 id="阶跃函数"><a href="#阶跃函数" class="headerlink" title="阶跃函数"></a>阶跃函数</h1><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownQQ%E6%88%AA%E5%9B%BE20230128103645.png"></p>
+<h1 id="杂谈-总结"><a href="#杂谈-总结" class="headerlink" title="杂谈 + 总结"></a>杂谈 + 总结</h1><p>深度学习这块很多方向，又因为我是为了写个外挂，所以我学习的时候，除了基本概念和模型设计，都着重去了解计算机视觉方向的知识面。</p>
+<p>一开始是试着自己学个模型，但是真的很难，比如吧图片解码成三个数字在放到矩阵中，这要经过几次算法，学算法看论文，又耗费了我很多很多的时间，还有数据标注等等，但是功夫不负有心人，写了个泛用还行的普通模型，但是有依旧不够用，我对这个模型的神经网络的设计还有所欠缺。</p>
+<p>之后又了解到 <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3VsdHJhbHl0aWNzL3VsdHJhbHl0aWNz">yolov8<i class="fa fa-external-link-alt"></i></span> 模型，这是个很成熟的计算机视觉AI模型，泛用性也非常优秀，我只用简单实现鼠标移动，截图训练问题，到这一步，算是完成了我的初衷。</p>
+<p>之后我想了下，这东西怎么配合安全实现一个恶意软件分析，吧exe解码到矩阵之类的。。。没什么结果（算法问题不是我的强项了），就总结到这里了。</p>
 
     </div>
 
@@ -308,21 +329,19 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/ROP/" rel="tag"><i class="fa fa-tag"></i> ROP</a>
+              <a href="/tags/AI/" rel="tag"><i class="fa fa-tag"></i> AI</a>
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 深度学习</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/PWN/%E6%A0%88%E6%BA%A2%E5%87%BA/" rel="prev" title="栈溢出">
-                  <i class="fa fa-chevron-left"></i> 栈溢出
+                <a href="/PWN/ROP-ret2__libc_csu_init%EF%BC%8864%E4%BD%8DELF%EF%BC%89/" rel="prev" title="ROP-ret2__libc_csu_init（64位ELF）">
+                  <i class="fa fa-chevron-left"></i> ROP-ret2__libc_csu_init（64位ELF）
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/windows/%E6%B5%81%E9%87%8F%E8%BD%AC%E5%8F%91%E6%8A%80%E5%B7%A7/" rel="next" title="流量转发技巧">
-                  流量转发技巧 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
