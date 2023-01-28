@@ -2691,7 +2691,7 @@ mark.search-keyword {
 }
 /* 背景图 */
 body {
-  background-image: url("/images/raphael-lacoste-on-the-tracks-web.jpg");
+  background-image: url("https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownraphael-lacoste-on-the-tracks-web.jpg");
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
