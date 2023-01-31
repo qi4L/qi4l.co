@@ -2690,10 +2690,3 @@ mark.search-keyword {
   border-radius: 30px 30px 1px 1px !important;
 }
 /* 背景图 */
-body {
-  background-image: url("https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownraphael-lacoste-on-the-tracks-web.jpg");
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover;
-  background-position: 25% 25%;
-}
